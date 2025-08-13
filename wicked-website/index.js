@@ -20,7 +20,7 @@ const hostingRoutes = require('./routes/hosting');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const HOST = process.env.HOST || 'localhost';
+const HOST = process.env.HOST || '0.0.0.0';  // Changed from 'localhost' to '0.0.0.0'
 
 // Security middleware
 app.use(helmet({
@@ -39,7 +39,18 @@ app.use(helmet({
 // CORS configuration
 app.use(cors({
   origin: process.env.NODE_ENV === 'production' 
-    ? [process.env.FRONTEND_URL, `http://${HOST}:${PORT}`, '*'] 
+    ? [
+        process.env.FRONTEND_URL, 
+        `http://${HOST}:${PORT}`, 
+        'https://teamwicked.me',
+        'http://teamwicked.me',
+        'https://www.teamwicked.me',
+        'http://www.teamwicked.me',
+        'http://119.202.156.3',
+        'https://119.202.156.3',
+        `http://119.202.156.3:${PORT}`,
+        '*'
+      ] 
     : ['http://localhost:3000', 'http://localhost:3001'],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
@@ -154,6 +165,7 @@ const startServer = async () => {
     app.listen(PORT, HOST, () => {
       console.log(`Server is running on http://${HOST}:${PORT}`);
       console.log(`External access: http://119.202.156.3:${PORT}`);
+      console.log(`Domain access: https://teamwicked.me`);
       console.log(`Environment: ${process.env.NODE_ENV}`);
     });
   } catch (error) {
