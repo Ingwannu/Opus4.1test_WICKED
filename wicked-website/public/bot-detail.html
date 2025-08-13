@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bot Details - WICKED</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <!-- Animated Background Elements -->
+    <div class="animated-bg">
+        <div class="gradient-orb orb-1"></div>
+        <div class="gradient-orb orb-2"></div>
+        <div class="gradient-orb orb-3"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="/" class="nav-brand">
+                <img src="/logo.svg" alt="WICKED" class="nav-logo">
+            </a>
+            
+            <button class="mobile-menu-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            
+            <ul class="nav-menu">
+                <li><a href="/" class="nav-link">홈</a></li>
+                <li><a href="/bots" class="nav-link">Discord Bot</a></li>
+                <li><a href="/services" class="nav-link">개발 외주</a></li>
+                <li><a href="/hosting" class="nav-link">호스팅</a></li>
+                <li id="profile-btn" class="hidden"></li>
+                <li id="admin-btn" class="hidden">
+                    <a href="/admin" class="nav-link">관리자 패널</a>
+                </li>
+                <li id="auth-buttons">
+                    <div class="flex gap-2">
+                        <a href="/login" class="btn btn-secondary">로그인</a>
+                        <a href="/register" class="btn btn-primary">회원가입</a>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Alert Container -->
+    <div id="alert-container" style="position: fixed; top: 90px; left: 50%; transform: translateX(-50%); z-index: 1001; width: 90%; max-width: 600px;"></div>
+
+    <!-- Main Content -->
+    <main>
+        <section class="mt-5">
+            <div class="container">
+                <div id="bot-detail" class="glass-container">
+                    <div class="text-center">
+                        <div class="spinner"></div>
+                        <p class="mt-3">봇 정보를 불러오는 중...</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="mt-5">
+        <div class="container">
+            <div class="glass-container text-center">
+                <p>&copy; 2024 WICKED Team. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/js/common.js"></script>
+    <script>
+        // Get bot slug from URL
+        const pathParts = window.location.pathname.split('/');
+        const botSlug = pathParts[pathParts.length - 1];
+
+        async function loadBotDetail() {
+            try {
+                const response = await fetch(`/api/bots/${botSlug}`);
+                if (!response.ok) throw new Error('봇을 찾을 수 없습니다');
+                
+                const bot = await response.json();
+                
+                document.getElementById('bot-detail').innerHTML = `
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            ${bot.image_url ? `<img src="${bot.image_url}" alt="${bot.name}" class="bot-image">` : ''}
+                            <h1>${bot.name}</h1>
+                            <p class="text-muted">${bot.short_description}</p>
+                            <div class="mt-4">
+                                <a href="${bot.invite_link}" target="_blank" class="btn btn-primary">봇 초대하기</a>
+                                ${bot.support_server ? `<a href="${bot.support_server}" target="_blank" class="btn btn-secondary ml-2">서포트 서버</a>` : ''}
+                            </div>
+                        </div>
+                        <div>
+                            <h3>상세 설명</h3>
+                            <div class="bot-description">${bot.long_description || '상세 설명이 없습니다.'}</div>
+                            
+                            <h3 class="mt-4">기능</h3>
+                            <div class="bot-features">
+                                ${bot.features ? bot.features.split(',').map(f => `<span class="feature-tag">${f.trim()}</span>`).join('') : ''}
+                            </div>
+                            
+                            <div class="mt-4">
+                                <p><strong>카테고리:</strong> ${bot.category}</p>
+                                <p><strong>접두사:</strong> ${bot.prefix || '/'}</p>
+                                <p><strong>상태:</strong> <span class="status-${bot.status}">${bot.status}</span></p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                document.title = `${bot.name} - WICKED`;
+            } catch (error) {
+                document.getElementById('bot-detail').innerHTML = `
+                    <div class="alert alert-danger">
+                        <h3>오류</h3>
+                        <p>${error.message}</p>
+                        <a href="/" class="btn btn-secondary mt-3">홈으로 돌아가기</a>
+                    </div>
+                `;
+            }
+        }
+
+        loadBotDetail();
+    </script>
+</body>
+</html>

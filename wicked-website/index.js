@@ -20,6 +20,7 @@ const hostingRoutes = require('./routes/hosting');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const HOST = process.env.HOST || 'localhost';
 
 // Security middleware
 app.use(helmet({
@@ -38,9 +39,11 @@ app.use(helmet({
 // CORS configuration
 app.use(cors({
   origin: process.env.NODE_ENV === 'production' 
-    ? process.env.FRONTEND_URL 
+    ? [process.env.FRONTEND_URL, `http://${HOST}:${PORT}`, '*'] 
     : ['http://localhost:3000', 'http://localhost:3001'],
-  credentials: true
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
 // Body parsing middleware
@@ -148,8 +151,9 @@ const startServer = async () => {
     await seedOwner();
     
     // Start server
-    app.listen(PORT, () => {
-      console.log(`Server is running on port ${PORT}`);
+    app.listen(PORT, HOST, () => {
+      console.log(`Server is running on http://${HOST}:${PORT}`);
+      console.log(`External access: http://119.202.156.3:${PORT}`);
       console.log(`Environment: ${process.env.NODE_ENV}`);
     });
   } catch (error) {

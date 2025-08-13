@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hosting Services - WICKED</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <!-- Animated Background Elements -->
+    <div class="animated-bg">
+        <div class="gradient-orb orb-1"></div>
+        <div class="gradient-orb orb-2"></div>
+        <div class="gradient-orb orb-3"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="/" class="nav-brand">
+                <img src="/logo.svg" alt="WICKED" class="nav-logo">
+            </a>
+            
+            <button class="mobile-menu-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            
+            <ul class="nav-menu">
+                <li><a href="/" class="nav-link">홈</a></li>
+                <li><a href="/bots" class="nav-link">Discord Bot</a></li>
+                <li><a href="/services" class="nav-link">개발 외주</a></li>
+                <li><a href="/hosting" class="nav-link">호스팅</a></li>
+                <li id="profile-btn" class="hidden"></li>
+                <li id="admin-btn" class="hidden">
+                    <a href="/admin" class="nav-link">관리자 패널</a>
+                </li>
+                <li id="auth-buttons">
+                    <div class="flex gap-2">
+                        <a href="/login" class="btn btn-secondary">로그인</a>
+                        <a href="/register" class="btn btn-primary">회원가입</a>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Alert Container -->
+    <div id="alert-container" style="position: fixed; top: 90px; left: 50%; transform: translateX(-50%); z-index: 1001; width: 90%; max-width: 600px;"></div>
+
+    <!-- Main Content -->
+    <main>
+        <section class="hero">
+            <div class="container">
+                <div class="glass-container text-center">
+                    <h1>Hosting Services</h1>
+                    <p>안정적이고 빠른 호스팅 서비스로 여러분의 프로젝트를 지원합니다</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="mt-5">
+            <div class="container">
+                <div id="hosting-categories" class="mb-5">
+                    <h2 class="text-center mb-4">호스팅 카테고리</h2>
+                    <div id="categories-list" class="grid grid-cols-4 gap-3 text-center">
+                        <div class="spinner"></div>
+                    </div>
+                </div>
+
+                <div id="hosting-products">
+                    <h2 class="text-center mb-4">호스팅 상품</h2>
+                    <div id="products-list" class="grid grid-cols-3 gap-4">
+                        <div class="glass-card text-center">
+                            <div class="spinner"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="mt-5">
+        <div class="container">
+            <div class="glass-container text-center">
+                <p>&copy; 2024 WICKED Team. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/js/common.js"></script>
+    <script>
+        let selectedCategory = null;
+
+        async function loadCategories() {
+            try {
+                const response = await fetch('/api/hosting/categories');
+                const categories = await response.json();
+                
+                const categoriesHtml = categories.map(cat => `
+                    <button class="btn btn-secondary category-btn ${selectedCategory === cat.id ? 'active' : ''}" 
+                            data-id="${cat.id}" onclick="filterByCategory(${cat.id})">
+                        ${cat.name}
+                    </button>
+                `).join('');
+                
+                document.getElementById('categories-list').innerHTML = `
+                    <button class="btn btn-secondary category-btn ${!selectedCategory ? 'active' : ''}" 
+                            onclick="filterByCategory(null)">전체</button>
+                    ${categoriesHtml}
+                `;
+            } catch (error) {
+                showAlert('카테고리를 불러오는데 실패했습니다', 'danger');
+            }
+        }
+
+        async function loadProducts() {
+            try {
+                let url = '/api/hosting/products';
+                if (selectedCategory) {
+                    url += `?category=${selectedCategory}`;
+                }
+                
+                const response = await fetch(url);
+                const products = await response.json();
+                
+                if (products.length === 0) {
+                    document.getElementById('products-list').innerHTML = `
+                        <div class="glass-container col-span-3 text-center">
+                            <p>등록된 상품이 없습니다.</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                const productsHtml = products.map(product => `
+                    <div class="glass-card hosting-product">
+                        <h3>${product.name}</h3>
+                        <p class="text-muted">${product.description}</p>
+                        
+                        <div class="product-specs mt-3">
+                            ${product.specifications ? `
+                                <ul>
+                                    ${product.specifications.split('\n').map(spec => `<li>${spec}</li>`).join('')}
+                                </ul>
+                            ` : ''}
+                        </div>
+                        
+                        <div class="product-price mt-4">
+                            <h4>${product.price.toLocaleString()}원</h4>
+                            <p class="text-sm">${product.billing_cycle}</p>
+                        </div>
+                        
+                        <button class="btn btn-primary mt-3" onclick="purchaseProduct(${product.id})">
+                            구매하기
+                        </button>
+                    </div>
+                `).join('');
+                
+                document.getElementById('products-list').innerHTML = productsHtml;
+            } catch (error) {
+                showAlert('상품을 불러오는데 실패했습니다', 'danger');
+            }
+        }
+
+        function filterByCategory(categoryId) {
+            selectedCategory = categoryId;
+            loadCategories();
+            loadProducts();
+        }
+
+        function purchaseProduct(productId) {
+            const token = TokenManager.getToken();
+            if (!token) {
+                showAlert('로그인이 필요합니다', 'warning');
+                setTimeout(() => window.location.href = '/login', 1500);
+                return;
+            }
+            
+            // TODO: 구매 프로세스 구현
+            showAlert('구매 기능은 준비 중입니다', 'info');
+        }
+
+        // Initialize
+        loadCategories();
+        loadProducts();
+    </script>
+</body>
+</html>

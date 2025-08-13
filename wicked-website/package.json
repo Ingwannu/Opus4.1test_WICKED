@@ -4,9 +4,10 @@
   "description": "WICKED Team Official Website - Discord Bot & Software Development",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
+    "start": "NODE_ENV=production node index.js",
     "dev": "nodemon index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "pterodactyl": "node index.js"
   },
   "keywords": [
     "discord",
