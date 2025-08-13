@@ -300,3 +300,99 @@ window.Auth = {
   TokenManager,
   UserManager
 };
+
+// Create floating particles
+function createParticles() {
+    const particlesContainer = document.createElement('div');
+    particlesContainer.className = 'particles';
+    document.body.appendChild(particlesContainer);
+    
+    // Create 20 particles
+    for (let i = 0; i < 20; i++) {
+        createParticle(particlesContainer);
+    }
+    
+    // Continue creating particles periodically
+    setInterval(() => {
+        if (particlesContainer.children.length < 20) {
+            createParticle(particlesContainer);
+        }
+    }, 1000);
+}
+
+function createParticle(container) {
+    const particle = document.createElement('div');
+    particle.className = 'particle';
+    
+    // Random position
+    particle.style.left = Math.random() * 100 + '%';
+    
+    // Random size
+    const size = Math.random() * 4 + 2;
+    particle.style.width = size + 'px';
+    particle.style.height = size + 'px';
+    
+    // Random animation duration
+    particle.style.animationDuration = (Math.random() * 10 + 10) + 's';
+    
+    // Random delay
+    particle.style.animationDelay = Math.random() * 5 + 's';
+    
+    // Random color variation
+    const colors = ['var(--accent-lime)', 'var(--accent-green)', 'var(--accent-gold)'];
+    particle.style.background = colors[Math.floor(Math.random() * colors.length)];
+    
+    container.appendChild(particle);
+    
+    // Remove particle after animation
+    particle.addEventListener('animationend', () => {
+        particle.remove();
+    });
+}
+
+// Initialize particles when DOM is loaded
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', createParticles);
+} else {
+    createParticles();
+}
+
+// Add mousemove parallax effect for glass containers
+let isMouseMoving = false;
+let mouseTimeout;
+
+document.addEventListener('mousemove', (e) => {
+    if (!isMouseMoving) {
+        isMouseMoving = true;
+        document.querySelectorAll('.glass-container, .glass-card').forEach(element => {
+            element.style.animationPlayState = 'paused';
+        });
+    }
+    
+    clearTimeout(mouseTimeout);
+    
+    const x = e.clientX / window.innerWidth;
+    const y = e.clientY / window.innerHeight;
+    
+    document.querySelectorAll('.gradient-orb').forEach((orb, index) => {
+        const speed = 0.5 + (index * 0.2);
+        const xOffset = (x - 0.5) * 50 * speed;
+        const yOffset = (y - 0.5) * 50 * speed;
+        
+        orb.style.transform = `translate(${xOffset}px, ${yOffset}px)`;
+    });
+    
+    mouseTimeout = setTimeout(() => {
+        isMouseMoving = false;
+        document.querySelectorAll('.glass-container, .glass-card').forEach(element => {
+            element.style.animationPlayState = 'running';
+        });
+    }, 1000);
+});
+
+// Add ambient color cycling to body
+let hue = 0;
+setInterval(() => {
+    hue = (hue + 0.1) % 360;
+    document.documentElement.style.setProperty('--dynamic-hue', hue);
+}, 50);
