@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>프로필 - WICKED</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="/" class="nav-brand">
+                <img src="/logo.svg" alt="WICKED" class="nav-logo">
+            </a>
+            
+            <button class="mobile-menu-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            
+            <ul class="nav-menu">
+                <li><a href="/" class="nav-link">홈</a></li>
+                <li><a href="/bots" class="nav-link">Discord Bot</a></li>
+                <li><a href="/services" class="nav-link">개발 외주</a></li>
+                <li><a href="/hosting" class="nav-link">호스팅</a></li>
+                <li id="profile-btn" class="hidden"></li>
+                <li id="admin-btn" class="hidden">
+                    <a href="/admin" class="nav-link">관리자 패널</a>
+                </li>
+                <li id="auth-buttons">
+                    <div class="flex gap-2">
+                        <a href="/login" class="btn btn-secondary">로그인</a>
+                        <a href="/register" class="btn btn-primary">회원가입</a>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Alert Container -->
+    <div id="alert-container" style="position: fixed; top: 90px; left: 50%; transform: translateX(-50%); z-index: 1001; width: 90%; max-width: 600px;"></div>
+
+    <!-- Main Content -->
+    <main>
+        <div class="container">
+            <h1 class="text-center mb-5">내 프로필</h1>
+            
+            <div class="grid grid-cols-2 gap-4">
+                <!-- Profile Information -->
+                <div class="glass-container fade-in">
+                    <h3 class="mb-4">계정 정보</h3>
+                    
+                    <div id="profile-info">
+                        <div class="flex justify-center mb-4">
+                            <div class="spinner"></div>
+                        </div>
+                    </div>
+                    
+                    <button id="logout-btn" class="btn btn-danger mt-4" style="width: 100%;">
+                        로그아웃
+                    </button>
+                </div>
+                
+                <!-- Update Profile -->
+                <div class="glass-container fade-in" style="animation-delay: 0.1s;">
+                    <h3 class="mb-4">프로필 수정</h3>
+                    
+                    <form id="update-profile-form">
+                        <div class="form-group">
+                            <label for="phone">전화번호</label>
+                            <input 
+                                type="tel" 
+                                id="phone" 
+                                name="phone" 
+                                placeholder="01012345678"
+                                pattern="[0-9]{10,15}"
+                            >
+                        </div>
+                        
+                        <hr style="margin: var(--spacing-lg) 0; border: 1px solid var(--glass-border);">
+                        
+                        <h4 class="mb-3">비밀번호 변경</h4>
+                        
+                        <div class="form-group">
+                            <label for="current-password">현재 비밀번호</label>
+                            <input 
+                                type="password" 
+                                id="current-password" 
+                                name="currentPassword" 
+                                placeholder="현재 비밀번호를 입력하세요"
+                            >
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="new-password">새 비밀번호</label>
+                            <input 
+                                type="password" 
+                                id="new-password" 
+                                name="newPassword" 
+                                placeholder="최소 6자 이상"
+                                minlength="6"
+                            >
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="new-password-confirm">새 비밀번호 확인</label>
+                            <input 
+                                type="password" 
+                                id="new-password-confirm" 
+                                name="newPasswordConfirm" 
+                                placeholder="새 비밀번호를 다시 입력하세요"
+                                minlength="6"
+                            >
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary" style="width: 100%;">
+                            프로필 업데이트
+                        </button>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Account Stats -->
+            <div class="glass-container mt-4 fade-in" style="animation-delay: 0.2s;">
+                <h3 class="mb-4">계정 통계</h3>
+                <div id="account-stats" class="grid grid-cols-4 gap-4">
+                    <div class="text-center">
+                        <div class="spinner"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="/js/common.js"></script>
+    <script>
+        const { $, showAlert, formatDate } = Utils;
+        const { TokenManager, UserManager } = Auth;
+        const { request } = API;
+
+        // Load profile data
+        async function loadProfile() {
+            try {
+                const response = await request('/profile');
+                const { user } = response;
+                
+                const roleColors = {
+                    'OWNER': 'var(--accent-gold)',
+                    'ADMIN': 'var(--error)',
+                    'ULTRA': '#a855f7',
+                    'PRO': '#3b82f6',
+                    'FREE': 'var(--text-secondary)'
+                };
+                
+                const roleNames = {
+                    'OWNER': '오너',
+                    'ADMIN': '관리자',
+                    'ULTRA': '울트라',
+                    'PRO': '프로',
+                    'FREE': '무료'
+                };
+                
+                $('#profile-info').innerHTML = `
+                    <div class="mb-3">
+                        <strong>아이디:</strong> <span>${user.username}</span>
+                    </div>
+                    <div class="mb-3">
+                        <strong>이메일:</strong> <span>${user.email}</span>
+                    </div>
+                    <div class="mb-3">
+                        <strong>전화번호:</strong> <span>${user.phone}</span>
+                    </div>
+                    <div class="mb-3">
+                        <strong>계정 유형:</strong> 
+                        <span style="color: ${roleColors[user.role]}; font-weight: 600;">
+                            ${roleNames[user.role]}
+                        </span>
+                    </div>
+                    <div class="mb-3">
+                        <strong>계정 상태:</strong> 
+                        <span style="color: ${user.status === 'ACTIVE' ? 'var(--success)' : 'var(--error)'};">
+                            ${user.status === 'ACTIVE' ? '활성' : '정지됨'}
+                        </span>
+                    </div>
+                    <div class="mb-3">
+                        <strong>가입일:</strong> <span>${formatDate(user.createdAt)}</span>
+                    </div>
+                    <div>
+                        <strong>마지막 로그인:</strong> 
+                        <span>${user.lastLogin ? formatDate(user.lastLogin) : '없음'}</span>
+                    </div>
+                `;
+                
+                // Set current phone number in update form
+                $('#phone').value = user.phone;
+                
+            } catch (error) {
+                showAlert('프로필을 불러오는데 실패했습니다.', 'error');
+            }
+        }
+
+        // Load account stats
+        async function loadStats() {
+            try {
+                const response = await request('/profile/stats');
+                const { stats } = response;
+                
+                $('#account-stats').innerHTML = `
+                    <div class="text-center">
+                        <h4 style="color: var(--accent-lime); margin-bottom: var(--spacing-sm);">
+                            ${stats.accountAge}일
+                        </h4>
+                        <p>계정 나이</p>
+                    </div>
+                    <div class="text-center">
+                        <h4 style="color: var(--accent-green); margin-bottom: var(--spacing-sm);">
+                            ${stats.accountType}
+                        </h4>
+                        <p>계정 유형</p>
+                    </div>
+                    <div class="text-center">
+                        <h4 style="color: ${stats.accountStatus === 'ACTIVE' ? 'var(--success)' : 'var(--error)'}; margin-bottom: var(--spacing-sm);">
+                            ${stats.accountStatus === 'ACTIVE' ? '활성' : '정지됨'}
+                        </h4>
+                        <p>계정 상태</p>
+                    </div>
+                    <div class="text-center">
+                        <h4 style="color: var(--info); margin-bottom: var(--spacing-sm);">
+                            ${stats.lastActive ? new Date(stats.lastActive).toLocaleDateString() : '없음'}
+                        </h4>
+                        <p>마지막 활동</p>
+                    </div>
+                `;
+            } catch (error) {
+                $('#account-stats').innerHTML = '<p class="text-center">통계를 불러올 수 없습니다.</p>';
+            }
+        }
+
+        // Handle profile update
+        $('#update-profile-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            const currentPassword = formData.get('currentPassword');
+            const newPassword = formData.get('newPassword');
+            const newPasswordConfirm = formData.get('newPasswordConfirm');
+            
+            // Validate password change if attempted
+            if (currentPassword || newPassword || newPasswordConfirm) {
+                if (!currentPassword) {
+                    showAlert('현재 비밀번호를 입력하세요.', 'error');
+                    return;
+                }
+                
+                if (newPassword !== newPasswordConfirm) {
+                    showAlert('새 비밀번호가 일치하지 않습니다.', 'error');
+                    return;
+                }
+                
+                if (newPassword.length < 6) {
+                    showAlert('새 비밀번호는 최소 6자 이상이어야 합니다.', 'error');
+                    return;
+                }
+            }
+            
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
+            submitBtn.textContent = '업데이트 중...';
+            submitBtn.disabled = true;
+            
+            try {
+                const data = {
+                    phone: formData.get('phone')
+                };
+                
+                if (currentPassword && newPassword) {
+                    data.currentPassword = currentPassword;
+                    data.newPassword = newPassword;
+                }
+                
+                await request('/profile', {
+                    method: 'PUT',
+                    body: data
+                });
+                
+                showAlert('프로필이 업데이트되었습니다.', 'success');
+                
+                // Clear password fields
+                $('#current-password').value = '';
+                $('#new-password').value = '';
+                $('#new-password-confirm').value = '';
+                
+                // Reload profile data
+                loadProfile();
+                
+            } catch (error) {
+                showAlert(error.message || '프로필 업데이트에 실패했습니다.', 'error');
+            } finally {
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
+            }
+        });
+
+        // Handle logout
+        $('#logout-btn').addEventListener('click', async () => {
+            if (!confirm('정말 로그아웃하시겠습니까?')) {
+                return;
+            }
+            
+            try {
+                await request('/auth/logout', { method: 'POST' });
+                
+                TokenManager.removeToken();
+                UserManager.removeUser();
+                
+                showAlert('로그아웃되었습니다.', 'success');
+                
+                setTimeout(() => {
+                    window.location.href = '/';
+                }, 1000);
+            } catch (error) {
+                showAlert('로그아웃에 실패했습니다.', 'error');
+            }
+        });
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            loadProfile();
+            loadStats();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>회원가입 - WICKED</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="/" class="nav-brand">
+                <img src="/logo.svg" alt="WICKED" class="nav-logo">
+            </a>
+            
+            <button class="mobile-menu-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            
+            <ul class="nav-menu">
+                <li><a href="/" class="nav-link">홈</a></li>
+                <li><a href="/bots" class="nav-link">Discord Bot</a></li>
+                <li><a href="/services" class="nav-link">개발 외주</a></li>
+                <li><a href="/hosting" class="nav-link">호스팅</a></li>
+                <li id="profile-btn" class="hidden"></li>
+                <li id="admin-btn" class="hidden">
+                    <a href="/admin" class="nav-link">관리자 패널</a>
+                </li>
+                <li id="auth-buttons">
+                    <div class="flex gap-2">
+                        <a href="/login" class="btn btn-secondary">로그인</a>
+                        <a href="/register" class="btn btn-primary">회원가입</a>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Alert Container -->
+    <div id="alert-container" style="position: fixed; top: 90px; left: 50%; transform: translateX(-50%); z-index: 1001; width: 90%; max-width: 600px;"></div>
+
+    <!-- Main Content -->
+    <main>
+        <div class="container">
+            <div class="flex justify-center items-center" style="min-height: calc(100vh - 160px);">
+                <div class="glass-container fade-in" style="width: 100%; max-width: 500px;">
+                    <h2 class="text-center mb-4">회원가입</h2>
+                    
+                    <form id="register-form">
+                        <div class="form-group">
+                            <label for="username">아이디</label>
+                            <input 
+                                type="text" 
+                                id="username" 
+                                name="username" 
+                                placeholder="영문, 숫자, 언더스코어(_), 하이픈(-) 사용 가능"
+                                pattern="[a-zA-Z0-9_-]{3,50}"
+                                title="3-50자의 영문, 숫자, 언더스코어, 하이픈만 사용 가능합니다"
+                                required
+                            >
+                            <small id="username-check" style="display: block; margin-top: var(--spacing-xs); color: var(--text-muted);"></small>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="email">이메일</label>
+                            <input 
+                                type="email" 
+                                id="email" 
+                                name="email" 
+                                placeholder="example@email.com"
+                                required
+                            >
+                            <small id="email-check" style="display: block; margin-top: var(--spacing-xs); color: var(--text-muted);"></small>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="password">비밀번호</label>
+                            <input 
+                                type="password" 
+                                id="password" 
+                                name="password" 
+                                placeholder="최소 6자 이상"
+                                minlength="6"
+                                required
+                            >
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="password-confirm">비밀번호 확인</label>
+                            <input 
+                                type="password" 
+                                id="password-confirm" 
+                                name="password-confirm" 
+                                placeholder="비밀번호를 다시 입력하세요"
+                                minlength="6"
+                                required
+                            >
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="phone">전화번호</label>
+                            <input 
+                                type="tel" 
+                                id="phone" 
+                                name="phone" 
+                                placeholder="01012345678 (하이픈 없이 입력)"
+                                pattern="[0-9]{10,15}"
+                                title="10-15자리 숫자만 입력하세요"
+                                required
+                            >
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary" style="width: 100%;">
+                            회원가입
+                        </button>
+                        
+                        <div class="text-center mt-4">
+                            <p>
+                                이미 계정이 있으신가요? 
+                                <a href="/login">로그인</a>
+                            </p>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="/js/common.js"></script>
+    <script>
+        const { $, showAlert } = Utils;
+        const { TokenManager, UserManager } = Auth;
+        const { request } = API;
+
+        // Check if already logged in
+        if (TokenManager.isAuthenticated()) {
+            window.location.href = '/';
+        }
+
+        // Real-time username availability check
+        let usernameCheckTimeout;
+        $('#username').addEventListener('input', (e) => {
+            clearTimeout(usernameCheckTimeout);
+            const username = e.target.value;
+            const checkElement = $('#username-check');
+            
+            if (username.length < 3) {
+                checkElement.textContent = '';
+                return;
+            }
+            
+            checkElement.textContent = '확인 중...';
+            checkElement.style.color = 'var(--text-muted)';
+            
+            usernameCheckTimeout = setTimeout(async () => {
+                try {
+                    const response = await fetch(`/api/auth/check-username/${username}`);
+                    const data = await response.json();
+                    
+                    if (data.available) {
+                        checkElement.textContent = '✓ 사용 가능한 아이디입니다';
+                        checkElement.style.color = 'var(--success)';
+                    } else {
+                        checkElement.textContent = '✗ 이미 사용 중인 아이디입니다';
+                        checkElement.style.color = 'var(--error)';
+                    }
+                } catch (error) {
+                    checkElement.textContent = '';
+                }
+            }, 500);
+        });
+
+        // Real-time email availability check
+        let emailCheckTimeout;
+        $('#email').addEventListener('input', (e) => {
+            clearTimeout(emailCheckTimeout);
+            const email = e.target.value;
+            const checkElement = $('#email-check');
+            
+            if (!email || !email.includes('@')) {
+                checkElement.textContent = '';
+                return;
+            }
+            
+            checkElement.textContent = '확인 중...';
+            checkElement.style.color = 'var(--text-muted)';
+            
+            emailCheckTimeout = setTimeout(async () => {
+                try {
+                    const response = await fetch(`/api/auth/check-email/${email}`);
+                    const data = await response.json();
+                    
+                    if (data.available) {
+                        checkElement.textContent = '✓ 사용 가능한 이메일입니다';
+                        checkElement.style.color = 'var(--success)';
+                    } else {
+                        checkElement.textContent = '✗ 이미 사용 중인 이메일입니다';
+                        checkElement.style.color = 'var(--error)';
+                    }
+                } catch (error) {
+                    checkElement.textContent = '';
+                }
+            }, 500);
+        });
+
+        // Handle register form submission
+        $('#register-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            const password = formData.get('password');
+            const passwordConfirm = formData.get('password-confirm');
+            
+            // Validate password match
+            if (password !== passwordConfirm) {
+                showAlert('비밀번호가 일치하지 않습니다.', 'error');
+                return;
+            }
+            
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
+            submitBtn.textContent = '가입 중...';
+            submitBtn.disabled = true;
+            
+            try {
+                const data = {
+                    username: formData.get('username'),
+                    email: formData.get('email'),
+                    password: password,
+                    phone: formData.get('phone')
+                };
+                
+                const response = await request('/auth/register', {
+                    method: 'POST',
+                    body: data
+                });
+                
+                if (response.token) {
+                    TokenManager.setToken(response.token);
+                    UserManager.setUser(response.user);
+                    
+                    showAlert('회원가입이 완료되었습니다!', 'success');
+                    
+                    setTimeout(() => {
+                        window.location.href = '/';
+                    }, 1500);
+                }
+            } catch (error) {
+                showAlert(error.message || '회원가입에 실패했습니다.', 'error');
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>
