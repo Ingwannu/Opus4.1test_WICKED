@@ -1,0 +1,39 @@
+name: Deploy to Production
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Use Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20.x'
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: |
+        cd wicked-website
+        npm ci --production
+    
+    - name: Build application
+      run: |
+        cd wicked-website
+        # 빌드 스크립트가 있다면 실행
+        npm run build || true
+    
+    - name: Deploy to server
+      run: |
+        echo "배포 스크립트를 여기에 추가하세요"
+        # 예시:
+        # - SSH를 통한 배포
+        # - Docker 이미지 빌드 및 푸시
+        # - 클라우드 서비스 배포 (AWS, GCP, Azure 등)
