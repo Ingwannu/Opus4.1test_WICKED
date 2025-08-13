@@ -19,8 +19,8 @@ const botRoutes = require('./routes/bots');
 const hostingRoutes = require('./routes/hosting');
 
 const app = express();
-const PORT = process.env.PORT || 3000;
-const HOST = process.env.HOST || '0.0.0.0';  // Changed from 'localhost' to '0.0.0.0'
+const PORT = process.env.SERVER_PORT || process.env.PORT || 50012;  // Use Pterodactyl's SERVER_PORT first
+const HOST = '0.0.0.0';  // Always bind to all interfaces in container
 
 // Security middleware
 app.use(helmet({
