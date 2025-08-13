@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>관리자 패널 - WICKED</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="/" class="nav-brand">
+                <img src="/logo.svg" alt="WICKED" class="nav-logo">
+            </a>
+            
+            <button class="mobile-menu-toggle" id="admin-menu-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            
+            <ul class="nav-menu">
+                <li><a href="/" class="nav-link">홈</a></li>
+                <li><a href="/bots" class="nav-link">Discord Bot</a></li>
+                <li><a href="/services" class="nav-link">개발 외주</a></li>
+                <li><a href="/hosting" class="nav-link">호스팅</a></li>
+                <li id="profile-btn" class="hidden"></li>
+                <li id="admin-btn" class="hidden">
+                    <a href="/admin" class="nav-link">관리자 패널</a>
+                </li>
+                <li id="auth-buttons">
+                    <div class="flex gap-2">
+                        <a href="/login" class="btn btn-secondary">로그인</a>
+                        <a href="/register" class="btn btn-primary">회원가입</a>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Alert Container -->
+    <div id="alert-container" style="position: fixed; top: 90px; left: 50%; transform: translateX(-50%); z-index: 1001; width: 90%; max-width: 600px;"></div>
+
+    <!-- Admin Sidebar -->
+    <aside class="admin-sidebar" id="admin-sidebar">
+        <h3 class="mb-4">관리자 메뉴</h3>
+        <ul class="sidebar-nav">
+            <li><a href="#dashboard" class="nav-item active" data-section="dashboard">📊 대시보드</a></li>
+            <li><a href="#users" class="nav-item" data-section="users">👥 사용자 관리</a></li>
+            <li><a href="#bots" class="nav-item" data-section="bots">🤖 Discord 봇 관리</a></li>
+            <li><a href="#hosting" class="nav-item" data-section="hosting">🌐 호스팅 관리</a></li>
+            <li><a href="#logs" class="nav-item" data-section="logs">📝 활동 로그</a></li>
+        </ul>
+    </aside>
+
+    <!-- Admin Content -->
+    <main class="admin-content" id="admin-content">
+        <!-- Dashboard Section -->
+        <section id="dashboard" class="admin-section">
+            <h1 class="mb-4">관리자 대시보드</h1>
+            
+            <div class="grid grid-cols-4 gap-4 mb-5">
+                <div class="dashboard-card">
+                    <h3 id="total-users">0</h3>
+                    <p>전체 사용자</p>
+                </div>
+                <div class="dashboard-card">
+                    <h3 id="active-users">0</h3>
+                    <p>활성 사용자</p>
+                </div>
+                <div class="dashboard-card">
+                    <h3 id="total-bots">0</h3>
+                    <p>Discord 봇</p>
+                </div>
+                <div class="dashboard-card">
+                    <h3 id="total-products">0</h3>
+                    <p>호스팅 상품</p>
+                </div>
+            </div>
+            
+            <div class="glass-container">
+                <h3 class="mb-3">최근 로그인</h3>
+                <div id="recent-logins">
+                    <div class="text-center">
+                        <div class="spinner"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Users Section -->
+        <section id="users" class="admin-section hidden">
+            <h1 class="mb-4">사용자 관리</h1>
+            
+            <div class="search-bar">
+                <input type="text" id="user-search" placeholder="아이디, 이메일 또는 전화번호로 검색">
+                <select id="user-role-filter">
+                    <option value="">모든 역할</option>
+                    <option value="OWNER">오너</option>
+                    <option value="ADMIN">관리자</option>
+                    <option value="ULTRA">울트라</option>
+                    <option value="PRO">프로</option>
+                    <option value="FREE">무료</option>
+                </select>
+                <select id="user-status-filter">
+                    <option value="">모든 상태</option>
+                    <option value="ACTIVE">활성</option>
+                    <option value="SUSPENDED">정지</option>
+                    <option value="DELETED">삭제됨</option>
+                </select>
+                <button class="btn btn-primary" onclick="loadUsers()">검색</button>
+            </div>
+            
+            <div class="glass-container">
+                <div id="users-table">
+                    <div class="text-center">
+                        <div class="spinner"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Bots Section -->
+        <section id="bots" class="admin-section hidden">
+            <h1 class="mb-4">Discord 봇 관리</h1>
+            
+            <button class="btn btn-primary mb-4" onclick="openBotModal()">새 봇 추가</button>
+            
+            <div class="glass-container">
+                <div id="bots-list">
+                    <div class="text-center">
+                        <div class="spinner"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Hosting Section -->
+        <section id="hosting" class="admin-section hidden">
+            <h1 class="mb-4">호스팅 관리</h1>
+            
+            <div class="tabs">
+                <a href="#" class="tab active" data-tab="categories">카테고리</a>
+                <a href="#" class="tab" data-tab="products">상품</a>
+            </div>
+            
+            <!-- Categories Tab -->
+            <div id="categories-tab" class="tab-content">
+                <button class="btn btn-primary mb-4" onclick="openCategoryModal()">새 카테고리 추가</button>
+                <div class="glass-container">
+                    <div id="categories-list">
+                        <div class="text-center">
+                            <div class="spinner"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Products Tab -->
+            <div id="products-tab" class="tab-content hidden">
+                <button class="btn btn-primary mb-4" onclick="openProductModal()">새 상품 추가</button>
+                <div class="glass-container">
+                    <div id="products-list">
+                        <div class="text-center">
+                            <div class="spinner"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Logs Section -->
+        <section id="logs" class="admin-section hidden">
+            <h1 class="mb-4">활동 로그</h1>
+            
+            <div class="glass-container">
+                <div id="logs-table">
+                    <div class="text-center">
+                        <div class="spinner"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Modals -->
+    <!-- User Modal -->
+    <div id="user-modal" class="admin-modal">
+        <div class="admin-modal-content">
+            <h3 id="user-modal-title">사용자 정보</h3>
+            <div id="user-modal-body"></div>
+            <div class="flex justify-between mt-4">
+                <button class="btn btn-secondary" onclick="closeModal('user-modal')">닫기</button>
+                <div id="user-modal-actions"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bot Modal -->
+    <div id="bot-modal" class="admin-modal">
+        <div class="admin-modal-content">
+            <h3 id="bot-modal-title">봇 추가/수정</h3>
+            <form id="bot-form">
+                <div class="form-group">
+                    <label for="bot-name">봇 이름</label>
+                    <input type="text" id="bot-name" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="bot-short-desc">간단한 설명 (150자 이내)</label>
+                    <input type="text" id="bot-short-desc" name="short_description" maxlength="150" required>
+                </div>
+                <div class="form-group">
+                    <label for="bot-invite">초대 링크</label>
+                    <input type="url" id="bot-invite" name="invite_link">
+                </div>
+                <div class="form-group">
+                    <label for="bot-image">이미지</label>
+                    <input type="file" id="bot-image" name="image" accept="image/*">
+                </div>
+                <div class="form-group">
+                    <label for="bot-description">상세 설명 (마크다운)</label>
+                    <div class="markdown-editor">
+                        <textarea id="bot-description" name="description" rows="10"></textarea>
+                        <div class="markdown-preview" id="bot-preview"></div>
+                    </div>
+                </div>
+                <div class="flex justify-between mt-4">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('bot-modal')">취소</button>
+                    <button type="submit" class="btn btn-primary">저장</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Category Modal -->
+    <div id="category-modal" class="admin-modal">
+        <div class="admin-modal-content">
+            <h3 id="category-modal-title">카테고리 추가/수정</h3>
+            <form id="category-form">
+                <div class="form-group">
+                    <label for="category-name">카테고리 이름</label>
+                    <input type="text" id="category-name" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="category-description">설명</label>
+                    <textarea id="category-description" name="description" rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="category-order">표시 순서</label>
+                    <input type="number" id="category-order" name="order" value="0">
+                </div>
+                <div class="flex justify-between mt-4">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('category-modal')">취소</button>
+                    <button type="submit" class="btn btn-primary">저장</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Product Modal -->
+    <div id="product-modal" class="admin-modal">
+        <div class="admin-modal-content">
+            <h3 id="product-modal-title">상품 추가/수정</h3>
+            <form id="product-form">
+                <div class="form-group">
+                    <label for="product-category">카테고리</label>
+                    <select id="product-category" name="category_id" required></select>
+                </div>
+                <div class="form-group">
+                    <label for="product-name">상품명</label>
+                    <input type="text" id="product-name" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="product-price">가격 (원)</label>
+                    <input type="number" id="product-price" name="price" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label for="product-status">상태</label>
+                    <select id="product-status" name="status">
+                        <option value="AVAILABLE">판매중</option>
+                        <option value="OUT_OF_STOCK">품절</option>
+                        <option value="HIDDEN">숨김</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="product-image">이미지</label>
+                    <input type="file" id="product-image" name="image" accept="image/*">
+                </div>
+                <div class="form-group">
+                    <label for="product-description">설명 (마크다운)</label>
+                    <div class="markdown-editor">
+                        <textarea id="product-description" name="description" rows="10"></textarea>
+                        <div class="markdown-preview" id="product-preview"></div>
+                    </div>
+                </div>
+                <div class="flex justify-between mt-4">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('product-modal')">취소</button>
+                    <button type="submit" class="btn btn-primary">저장</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="/js/common.js"></script>
+    <script src="/js/admin.js"></script>
+</body>
+</html>
