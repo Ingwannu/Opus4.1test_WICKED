@@ -39,7 +39,7 @@ app.use(helmet({
       defaultSrc: ["'self'"],
       styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "http:", "https:"],
       scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
-      fontSrc: ["'self'", "https://fonts.gstatic.com", "data:"],
+      fontSrc: ["'self'", "https://fonts.gstatic.com", "data:", "http:", "https:"],
       imgSrc: ["'self'", "data:", "https:", "http:"],
       connectSrc: ["'self'", "https:", "http:"]
     }
@@ -68,16 +68,26 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
+// Debug middleware for static files
+app.use((req, res, next) => {
+  if (req.path.startsWith('/css/') || req.path.startsWith('/js/') || req.path.endsWith('.css') || req.path.endsWith('.js')) {
+    console.log(`[STATIC FILE REQUEST] ${req.method} ${req.path} from ${req.ip}`);
+  }
+  next();
+});
+
 // Static files - moved before body parsing to ensure proper handling
 app.use(express.static(path.join(__dirname, 'public'), {
-  setHeaders: (res, path, stat) => {
+  setHeaders: (res, filePath, stat) => {
     // Set proper content types
-    if (path.endsWith('.css')) {
-      res.setHeader('Content-Type', 'text/css');
-    } else if (path.endsWith('.js')) {
-      res.setHeader('Content-Type', 'application/javascript');
-    } else if (path.endsWith('.svg')) {
+    if (filePath.endsWith('.css')) {
+      res.setHeader('Content-Type', 'text/css; charset=UTF-8');
+    } else if (filePath.endsWith('.js')) {
+      res.setHeader('Content-Type', 'application/javascript; charset=UTF-8');
+    } else if (filePath.endsWith('.svg')) {
       res.setHeader('Content-Type', 'image/svg+xml');
+    } else if (filePath.endsWith('.html')) {
+      res.setHeader('Content-Type', 'text/html; charset=UTF-8');
     }
     
     // Add cache control
@@ -85,6 +95,8 @@ app.use(express.static(path.join(__dirname, 'public'), {
     
     // Remove X-Powered-By header
     res.removeHeader('X-Powered-By');
+    
+    console.log(`[STATIC SERVED] ${filePath} with Content-Type: ${res.getHeader('Content-Type')}`);
   },
   index: false // Disable directory indexing
 }));

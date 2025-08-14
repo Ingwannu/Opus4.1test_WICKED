@@ -3,6 +3,12 @@ require('dotenv').config();
 
 const seedOwner = async () => {
   try {
+    // Check if required environment variables are set
+    if (!process.env.ADMIN_USERNAME || !process.env.ADMIN_EMAIL || !process.env.ADMIN_PHONE || !process.env.ADMIN_PASSWORD) {
+      console.log('Admin account environment variables not set. Skipping owner seed.');
+      return;
+    }
+    
     // Sync database
     await sequelize.sync({ force: false });
     
@@ -34,14 +40,15 @@ const seedOwner = async () => {
     });
   } catch (error) {
     console.error('Error seeding owner:', error);
-  } finally {
-    await sequelize.close();
+    // Don't exit the process on seed error
   }
 };
 
 // Run seed if called directly
 if (require.main === module) {
-  seedOwner();
+  seedOwner().then(() => {
+    sequelize.close();
+  });
 }
 
 module.exports = seedOwner;
