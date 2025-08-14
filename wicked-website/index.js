@@ -32,19 +32,21 @@ app.use((req, res, next) => {
   next();
 });
 
-// Security middleware
+// Security middleware - Modified for HTTP mode
 app.use(helmet({
   contentSecurityPolicy: {
     directives: {
       defaultSrc: ["'self'"],
-      styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "http:", "https:"],
+      styleSrc: ["'self'", "'unsafe-inline'", "fonts.googleapis.com", "http:", "https:", "*"],
       scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
-      fontSrc: ["'self'", "https://fonts.gstatic.com", "data:", "http:", "https:"],
-      imgSrc: ["'self'", "data:", "https:", "http:"],
-      connectSrc: ["'self'", "https:", "http:"]
+      fontSrc: ["'self'", "fonts.gstatic.com", "data:", "http:", "https:", "*"],
+      imgSrc: ["'self'", "data:", "https:", "http:", "*"],
+      connectSrc: ["'self'", "https:", "http:", "*"],
+      upgradeInsecureRequests: null  // Disable HTTPS upgrade
     }
   },
-  crossOriginOpenerPolicy: process.env.NODE_ENV === 'production' ? false : undefined
+  hsts: false,  // Disable HSTS for HTTP mode
+  crossOriginOpenerPolicy: false
 }));
 
 // CORS configuration
