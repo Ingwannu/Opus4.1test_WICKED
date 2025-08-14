@@ -28,7 +28,7 @@ const User = sequelize.define('User', {
     type: DataTypes.STRING,
     allowNull: false,
     validate: {
-      is: /^[0-9]{10,15}$/
+      is: /^(\+82-?|0)[0-9]{1,2}-?[0-9]{3,4}-?[0-9]{4}$/
     }
   },
   password_hash: {

@@ -22,6 +22,16 @@ const app = express();
 const PORT = process.env.SERVER_PORT || process.env.PORT || 50012;  // Use Pterodactyl's SERVER_PORT first
 const HOST = '0.0.0.0';  // Always bind to all interfaces in container
 
+// Trust proxy settings for HTTPS
+app.set('trust proxy', true);
+app.use((req, res, next) => {
+  // Force HTTPS in production when accessed via domain
+  if (process.env.NODE_ENV === 'production' && req.headers.host && req.headers.host.includes('teamwicked.me')) {
+    req.headers['x-forwarded-proto'] = 'https';
+  }
+  next();
+});
+
 // Security middleware
 app.use(helmet({
   contentSecurityPolicy: {
@@ -31,9 +41,10 @@ app.use(helmet({
       scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
       fontSrc: ["'self'", "https://fonts.gstatic.com", "data:"],
       imgSrc: ["'self'", "data:", "https:", "http:"],
-      connectSrc: ["'self'"]
+      connectSrc: ["'self'", "https:", "http:"]
     }
-  }
+  },
+  crossOriginOpenerPolicy: process.env.NODE_ENV === 'production' ? false : undefined
 }));
 
 // CORS configuration
@@ -59,13 +70,29 @@ app.use(cors({
 
 // Static files - moved before body parsing to ensure proper handling
 app.use(express.static(path.join(__dirname, 'public'), {
-  setHeaders: (res, path) => {
+  setHeaders: (res, path, stat) => {
+    // Set proper content types
     if (path.endsWith('.css')) {
       res.setHeader('Content-Type', 'text/css');
+    } else if (path.endsWith('.js')) {
+      res.setHeader('Content-Type', 'application/javascript');
+    } else if (path.endsWith('.svg')) {
+      res.setHeader('Content-Type', 'image/svg+xml');
     }
+    
+    // Add cache control
+    res.setHeader('Cache-Control', 'public, max-age=3600');
+    
+    // Remove X-Powered-By header
+    res.removeHeader('X-Powered-By');
+  },
+  index: false // Disable directory indexing
+}));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads'), {
+  setHeaders: (res, path) => {
+    res.setHeader('Cache-Control', 'public, max-age=86400'); // 24 hours cache
   }
 }));
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Body parsing middleware
 app.use(express.json());
@@ -98,7 +125,15 @@ app.use('/api/hosting', apiLimiter, hostingRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok', timestamp: new Date().toISOString() });
+  const protocol = req.headers['x-forwarded-proto'] || req.protocol;
+  const host = req.headers.host;
+  res.json({ 
+    status: 'ok', 
+    timestamp: new Date().toISOString(),
+    protocol: protocol,
+    host: host,
+    baseUrl: `${protocol}://${host}`
+  });
 });
 
 // Serve HTML files
