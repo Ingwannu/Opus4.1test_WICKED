@@ -906,18 +906,37 @@ main {
   }
 }
 
-/* Subtle rotation for decorative elements */
-.nav-logo {
-  animation: gentleRotate 30s linear infinite;
+/* Logo hover effect for GIF */
+.nav-brand {
+  position: relative;
+  display: inline-block;
 }
 
-@keyframes gentleRotate {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
+.nav-logo {
+  display: block;
+  transition: opacity var(--transition-fast);
+}
+
+.nav-logo-gif {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 50px;
+  opacity: 0;
+  transition: opacity var(--transition-fast);
+  pointer-events: none;
+}
+
+.nav-brand:hover .nav-logo {
+  opacity: 0;
+}
+
+.nav-brand:hover .nav-logo-gif {
+  opacity: 1;
+}
+
+.navbar.scrolled .nav-logo-gif {
+  height: 40px;
 }
 
 /* Breathing animation for buttons on idle */
