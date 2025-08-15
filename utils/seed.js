@@ -1,11 +1,17 @@
 const { sequelize, User } = require('../models');
-require('dotenv').config();
+// Remove dotenv for Heroku deployment
 
 const seedOwner = async () => {
   try {
     // Check if required environment variables are set
     if (!process.env.ADMIN_USERNAME || !process.env.ADMIN_EMAIL || !process.env.ADMIN_PHONE || !process.env.ADMIN_PASSWORD) {
       console.log('Admin account environment variables not set. Skipping owner seed.');
+      console.log('To set up admin account, configure these Heroku config vars:');
+      console.log('- ADMIN_USERNAME');
+      console.log('- ADMIN_EMAIL');
+      console.log('- ADMIN_PHONE');
+      console.log('- ADMIN_PASSWORD');
+      console.log('Use: heroku config:set ADMIN_USERNAME=your-username ADMIN_EMAIL=your-email etc.');
       return;
     }
     

@@ -5,7 +5,7 @@ const morgan = require('morgan');
 const cookieParser = require('cookie-parser');
 const rateLimit = require('express-rate-limit');
 const path = require('path');
-require('dotenv').config();
+// Remove dotenv for Heroku deployment
 
 const { sequelize } = require('./models');
 const seedOwner = require('./utils/seed');
