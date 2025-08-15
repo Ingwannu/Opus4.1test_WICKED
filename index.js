@@ -17,6 +17,7 @@ const profileRoutes = require('./routes/profile');
 const adminRoutes = require('./routes/admin');
 const botRoutes = require('./routes/bots');
 const hostingRoutes = require('./routes/hosting');
+const pageRoutes = require('./routes/pages');
 
 const app = express();
 const PORT = process.env.SERVER_PORT || process.env.PORT || 50012;  // Use Pterodactyl's SERVER_PORT first
@@ -136,6 +137,7 @@ app.use('/api/profile', apiLimiter, profileRoutes);
 app.use('/api/admin', apiLimiter, adminRoutes);
 app.use('/api/bots', apiLimiter, botRoutes);
 app.use('/api/hosting', apiLimiter, hostingRoutes);
+app.use('/api/pages', apiLimiter, pageRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
@@ -171,12 +173,24 @@ app.get('/admin', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'admin.html'));
 });
 
+app.get('/bots', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'bots.html'));
+});
+
 app.get('/bots/:slug', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'bot-detail.html'));
 });
 
 app.get('/hosting', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'hosting.html'));
+});
+
+app.get('/admin-pages', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'admin-pages.html'));
+});
+
+app.get('/pages/:slug', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'page.html'));
 });
 
 // 404 handler

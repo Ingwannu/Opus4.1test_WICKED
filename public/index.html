@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,19 +10,11 @@
     <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
-    <!-- Animated Background Elements -->
-    <div class="animated-bg">
-        <div class="gradient-orb orb-1"></div>
-        <div class="gradient-orb orb-2"></div>
-        <div class="gradient-orb orb-3"></div>
-        <div class="gradient-orb orb-4"></div>
-    </div>
-    
-    <!-- Liquid Animation -->
-    <div class="liquid-container">
-        <div class="liquid-shape"></div>
-        <div class="liquid-shape"></div>
-        <div class="liquid-shape"></div>
+    <!-- Liquid Glass Background -->
+    <div class="liquid-bg">
+        <div class="liquid-blob"></div>
+        <div class="liquid-blob"></div>
+        <div class="liquid-blob"></div>
     </div>
     
     <!-- Navigation -->
@@ -58,6 +50,24 @@
         </div>
     </nav>
 
+    <!-- Theme Switcher -->
+    <div class="theme-switcher">
+        <button class="theme-toggle" aria-label="테마 변경">
+            <svg class="theme-icon sun-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="12" cy="12" r="5" stroke="currentColor" stroke-width="2"/>
+                <path d="M12 1v6m0 6v6m-9-9h6m6 0h6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            <svg class="theme-icon moon-icon hidden" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+            </svg>
+            <svg class="theme-icon system-icon hidden" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="2" y="3" width="20" height="14" rx="2" stroke="currentColor" stroke-width="2"/>
+                <path d="M8 21h8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                <path d="M12 17v4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+        </button>
+    </div>
+
     <!-- Alert Container -->
     <div id="alert-container" style="position: fixed; top: 90px; left: 50%; transform: translateX(-50%); z-index: 1001; width: 90%; max-width: 600px;"></div>
 
@@ -65,20 +75,20 @@
     <main>
         <!-- Hero Section -->
         <section class="hero">
-            <div class="container">
-                <div class="glass-container fade-in text-center">
+            <div class="hero-content">
+                <div class="glass-card fade-in">
                     <h1 class="hero-title">WICKED Team</h1>
                     <p class="hero-subtitle">최고의 Discord 봇과 소프트웨어 개발 서비스를 제공합니다</p>
                     <div class="flex gap-3 justify-center mt-5">
                         <a href="/bots" class="btn btn-primary">
                             <span>Discord 봇 보기</span>
-                            <svg class="btn-icon" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M7.5 5L12.5 10L7.5 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                             </svg>
                         </a>
                         <a href="/services" class="btn btn-secondary">
                             <span>개발 외주 문의</span>
-                            <svg class="btn-icon" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M10 4V16M16 10H4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                             </svg>
                         </a>
@@ -88,165 +98,113 @@
         </section>
 
         <!-- Services Section -->
-        <section class="services-section">
+        <section class="section">
             <div class="container">
-                <h2 class="section-title text-center mb-5">Our Services</h2>
+                <h2 class="section-title">Our Services</h2>
                 <div class="grid grid-cols-3 gap-4">
                     <!-- Discord Bot Development -->
-                    <div class="service-card glass-card fade-in">
+                    <div class="service-card fade-in">
                         <div class="service-icon">
-                            <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <circle cx="24" cy="24" r="20" stroke="url(#gradient1)" stroke-width="2" opacity="0.5"/>
-                                <path d="M20 16C20 16 18 16 16 18C16 18 16 22 18 26C18 26 19 27 20 26V16ZM28 16C28 16 30 16 32 18C32 18 32 22 30 26C30 26 29 27 28 26V16Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                <defs>
-                                    <linearGradient id="gradient1" x1="0" y1="0" x2="48" y2="48">
-                                        <stop stop-color="#00d9ff"/>
-                                        <stop offset="1" stop-color="#7c3aed"/>
-                                    </linearGradient>
-                                </defs>
+                            <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M13.5 11C13.5 11 12 11 10.5 12.5C10.5 12.5 10.5 16 12 19C12 19 12.75 19.75 13.5 19V11ZM18.5 11C18.5 11 20 11 21.5 12.5C21.5 12.5 21.5 16 20 19C20 19 19.25 19.75 18.5 19V11Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M12 8C12 8 13 6 16 6C16 6 19 6 20 8C20 8 22 9 22 13C22 13 22 18 20 21C20 21 19 23 16 23C16 23 13 23 12 21C12 21 10 18 10 13C10 13 10 9 12 8Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                             </svg>
                         </div>
-                        <h3>Discord Bot Development</h3>
-                        <p>맞춤형 Discord 봇 개발로 서버를 더욱 효율적으로 관리하세요.</p>
-                        <div class="service-features">
-                            <span class="feature-tag">관리 봇</span>
-                            <span class="feature-tag">음악 봇</span>
-                            <span class="feature-tag">게임 봇</span>
-                            <span class="feature-tag">유틸리티</span>
-                        </div>
-                        <a href="/bots" class="service-link">
-                            자세히 보기 →
-                        </a>
+                        <h3 class="service-title">Discord Bot</h3>
+                        <p class="service-description">
+                            커스텀 Discord 봇 개발부터 기능 추가까지, 
+                            서버에 필요한 모든 봇 솔루션을 제공합니다.
+                        </p>
+                        <a href="/bots" class="btn btn-secondary mt-4">자세히 보기</a>
                     </div>
 
                     <!-- Software Development -->
-                    <div class="service-card glass-card fade-in" style="animation-delay: 0.1s;">
+                    <div class="service-card fade-in">
                         <div class="service-icon">
-                            <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <circle cx="24" cy="24" r="20" stroke="url(#gradient2)" stroke-width="2" opacity="0.5"/>
-                                <path d="M16 20L20 24L16 28M28 20H32" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                <defs>
-                                    <linearGradient id="gradient2" x1="0" y1="0" x2="48" y2="48">
-                                        <stop stop-color="#ec4899"/>
-                                        <stop offset="1" stop-color="#00d9ff"/>
-                                    </linearGradient>
-                                </defs>
+                            <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M10 20L6 16L10 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M22 20L26 16L22 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M18 10L14 22" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                             </svg>
                         </div>
-                        <h3>Software Development</h3>
-                        <p>웹, 모바일, 데스크톱 애플리케이션 개발 서비스를 제공합니다.</p>
-                        <div class="service-features">
-                            <span class="feature-tag">웹 앱</span>
-                            <span class="feature-tag">모바일</span>
-                            <span class="feature-tag">API</span>
-                            <span class="feature-tag">자동화</span>
-                        </div>
-                        <a href="/services" class="service-link">
-                            문의하기 →
-                        </a>
+                        <h3 class="service-title">소프트웨어 개발</h3>
+                        <p class="service-description">
+                            웹/앱 개발, API 구축, 자동화 솔루션 등 
+                            다양한 소프트웨어 개발 서비스를 제공합니다.
+                        </p>
+                        <a href="/services" class="btn btn-secondary mt-4">자세히 보기</a>
                     </div>
 
                     <!-- Hosting Services -->
-                    <div class="service-card glass-card fade-in" style="animation-delay: 0.2s;">
+                    <div class="service-card fade-in">
                         <div class="service-icon">
-                            <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <circle cx="24" cy="24" r="20" stroke="url(#gradient3)" stroke-width="2" opacity="0.5"/>
-                                <rect x="16" y="18" width="16" height="12" rx="2" stroke="currentColor" stroke-width="2"/>
-                                <circle cx="20" cy="24" r="1" fill="currentColor"/>
-                                <circle cx="24" cy="24" r="1" fill="currentColor"/>
-                                <defs>
-                                    <linearGradient id="gradient3" x1="0" y1="0" x2="48" y2="48">
-                                        <stop stop-color="#7c3aed"/>
-                                        <stop offset="1" stop-color="#ec4899"/>
-                                    </linearGradient>
-                                </defs>
+                            <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <rect x="8" y="6" width="16" height="20" rx="2" stroke="currentColor" stroke-width="2"/>
+                                <path d="M12 10h8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                <path d="M12 14h8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                <circle cx="12" cy="22" r="1" fill="currentColor"/>
+                                <circle cx="16" cy="22" r="1" fill="currentColor"/>
+                                <circle cx="20" cy="22" r="1" fill="currentColor"/>
                             </svg>
                         </div>
-                        <h3>Hosting Services</h3>
-                        <p>안정적이고 빠른 호스팅 서비스로 프로젝트를 운영하세요.</p>
-                        <div class="service-features">
-                            <span class="feature-tag">웹 호스팅</span>
-                            <span class="feature-tag">VPS</span>
-                            <span class="feature-tag">봇 호스팅</span>
-                            <span class="feature-tag">DB</span>
-                        </div>
-                        <a href="/hosting" class="service-link">
-                            상품 보기 →
-                        </a>
+                        <h3 class="service-title">호스팅 서비스</h3>
+                        <p class="service-description">
+                            안정적이고 빠른 Discord 봇 호스팅과 
+                            웹 애플리케이션 호스팅 서비스를 제공합니다.
+                        </p>
+                        <a href="/hosting" class="btn btn-secondary mt-4">자세히 보기</a>
                     </div>
                 </div>
             </div>
         </section>
 
         <!-- Features Section -->
-        <section class="features-section">
+        <section class="section">
             <div class="container">
-                <h2 class="section-title text-center mb-5">Why Choose WICKED?</h2>
-                <div class="features-grid">
-                    <div class="feature-item glass-card fade-in">
-                        <div class="feature-icon-wrapper">
-                            <div class="feature-icon">🚀</div>
+                <div class="glass-card">
+                    <h2 class="section-title">Why Choose WICKED?</h2>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="text-center">
+                            <div class="feature-icon mb-3">🚀</div>
+                            <h4 class="mb-2">빠른 개발</h4>
+                            <p class="text-muted">효율적인 개발 프로세스로 빠른 결과물 제공</p>
                         </div>
-                        <h4>빠른 개발</h4>
-                        <p>효율적인 개발 프로세스로 빠르게 결과물을 제공합니다.</p>
-                    </div>
-                    <div class="feature-item glass-card fade-in" style="animation-delay: 0.1s;">
-                        <div class="feature-icon-wrapper">
-                            <div class="feature-icon">💎</div>
+                        <div class="text-center">
+                            <div class="feature-icon mb-3">💎</div>
+                            <h4 class="mb-2">높은 품질</h4>
+                            <p class="text-muted">검증된 기술력으로 최고 품질의 서비스 보장</p>
                         </div>
-                        <h4>고품질 코드</h4>
-                        <p>깔끔하고 유지보수가 쉬운 코드를 작성합니다.</p>
-                    </div>
-                    <div class="feature-item glass-card fade-in" style="animation-delay: 0.2s;">
-                        <div class="feature-icon-wrapper">
-                            <div class="feature-icon">🛡️</div>
+                        <div class="text-center">
+                            <div class="feature-icon mb-3">🛡️</div>
+                            <h4 class="mb-2">보안 중시</h4>
+                            <p class="text-muted">안전한 코드와 보안 최적화된 솔루션</p>
                         </div>
-                        <h4>보안 우선</h4>
-                        <p>최신 보안 표준을 준수하여 안전한 서비스를 제공합니다.</p>
-                    </div>
-                    <div class="feature-item glass-card fade-in" style="animation-delay: 0.3s;">
-                        <div class="feature-icon-wrapper">
-                            <div class="feature-icon">🤝</div>
+                        <div class="text-center">
+                            <div class="feature-icon mb-3">🤝</div>
+                            <h4 class="mb-2">지속적 지원</h4>
+                            <p class="text-muted">프로젝트 완료 후에도 지속적인 유지보수 지원</p>
                         </div>
-                        <h4>지속적인 지원</h4>
-                        <p>개발 완료 후에도 지속적인 유지보수를 지원합니다.</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Discord Bots Preview -->
-        <section class="mt-5">
-            <div class="container">
-                <h2 class="text-center mb-4">Featured Discord Bots</h2>
-                <div id="featured-bots" class="grid grid-cols-3 gap-4">
-                    <div class="glass-card text-center">
-                        <div class="spinner"></div>
                     </div>
                 </div>
             </div>
         </section>
 
         <!-- CTA Section -->
-        <section class="cta-section">
+        <section class="section">
             <div class="container">
-                <div class="cta-container glass-container text-center">
-                    <div class="cta-glow"></div>
-                    <h2 class="cta-title">프로젝트를 시작할 준비가 되셨나요?</h2>
-                    <p class="cta-subtitle">WICKED 팀과 함께 멋진 프로젝트를 만들어보세요.</p>
-                    <div class="flex gap-3 justify-center mt-4">
-                        <a href="/register" class="btn btn-primary">
-                            <span>시작하기</span>
-                            <svg class="btn-icon" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M10 4L16 10L10 16M4 10H16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
-                        </a>
-                        <a href="/services" class="btn btn-secondary">
+                <div class="glass-card text-center">
+                    <h2 class="section-title">프로젝트를 시작할 준비가 되셨나요?</h2>
+                    <p class="hero-subtitle mb-4">
+                        WICKED과 함께 여러분의 아이디어를 현실로 만들어보세요
+                    </p>
+                    <div class="flex gap-3 justify-center">
+                        <a href="/contact" class="btn btn-primary">
                             <span>문의하기</span>
-                            <svg class="btn-icon" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M3 8L10 13L17 8M3 8L10 3L17 8M3 8V15L10 20L17 15V8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M3 10h14M12 5l5 5-5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                             </svg>
                         </a>
+                        <a href="/portfolio" class="btn btn-secondary">포트폴리오 보기</a>
                     </div>
                 </div>
             </div>
@@ -254,63 +212,36 @@
     </main>
 
     <!-- Footer -->
-    <footer class="mt-5" style="background: var(--primary-dark); padding: var(--spacing-xl) 0; border-top: 1px solid var(--glass-border);">
+    <footer class="section">
         <div class="container">
-            <div class="grid grid-cols-3 gap-4">
-                <div>
-                    <h4>WICKED Team</h4>
-                    <p>최고의 개발 서비스를 제공하는 전문 팀</p>
+            <div class="glass-card">
+                <div class="grid grid-cols-3 gap-4">
+                    <div>
+                        <h5 class="mb-3">WICKED</h5>
+                        <p class="text-muted">최고의 Discord 봇과 소프트웨어 개발 서비스</p>
+                    </div>
+                    <div>
+                        <h5 class="mb-3">Quick Links</h5>
+                        <ul class="list-none">
+                            <li class="mb-2"><a href="/bots" class="text-muted">Discord Bot</a></li>
+                            <li class="mb-2"><a href="/services" class="text-muted">개발 외주</a></li>
+                            <li class="mb-2"><a href="/hosting" class="text-muted">호스팅</a></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h5 class="mb-3">Contact</h5>
+                        <p class="text-muted">support@teamwicked.me</p>
+                        <p class="text-muted">Discord: WICKED#0000</p>
+                    </div>
                 </div>
-                <div>
-                    <h4>Quick Links</h4>
-                    <ul style="list-style: none; padding: 0;">
-                        <li><a href="/bots">Discord Bots</a></li>
-                        <li><a href="/services">개발 외주</a></li>
-                        <li><a href="/hosting">호스팅</a></li>
-                    </ul>
+                <div class="text-center mt-5">
+                    <p class="text-muted">&copy; 2024 WICKED. All rights reserved.</p>
                 </div>
-                <div>
-                    <h4>Contact</h4>
-                    <p>Email: support@wicked.team</p>
-                    <p>Discord: WICKED#0000</p>
-                </div>
-            </div>
-            <div class="text-center mt-4" style="padding-top: var(--spacing-lg); border-top: 1px solid var(--glass-border);">
-                <p>&copy; 2024 WICKED Team. All rights reserved.</p>
             </div>
         </div>
     </footer>
 
-    <script src="/js/common.js"></script>
-    <script>
-        // Load featured bots
-        async function loadFeaturedBots() {
-            const container = document.getElementById('featured-bots');
-            
-            try {
-                const response = await fetch('/api/bots/public');
-                const data = await response.json();
-                
-                if (data.bots && data.bots.length > 0) {
-                    container.innerHTML = data.bots.slice(0, 3).map(bot => `
-                        <a href="/bots/${bot.slug}" class="glass-card" style="text-decoration: none; color: inherit;">
-                            ${bot.image_path ? `<img src="${bot.image_path}" alt="${bot.name}" style="width: 100%; height: 200px; object-fit: cover; border-radius: var(--radius-sm); margin-bottom: var(--spacing-md);">` : ''}
-                            <h4>${bot.name}</h4>
-                            <p>${bot.short_description}</p>
-                        </a>
-                    `).join('');
-                } else {
-                    container.innerHTML = '<div class="glass-container text-center"><p>아직 등록된 봇이 없습니다.</p></div>';
-                }
-            } catch (error) {
-                container.innerHTML = '<div class="glass-container text-center"><p>봇을 불러오는 중 오류가 발생했습니다.</p></div>';
-            }
-        }
-
-        // Load bots on page load
-        document.addEventListener('DOMContentLoaded', () => {
-            loadFeaturedBots();
-        });
-    </script>
+    <script src="/js/main.js"></script>
+    <script src="/js/theme.js"></script>
 </body>
 </html>

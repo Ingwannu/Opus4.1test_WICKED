@@ -1,152 +1,147 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>로그인 - WICKED</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="//fonts.googleapis.com">
+    <link rel="preconnect" href="//fonts.gstatic.com" crossorigin>
+    <link href="//fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
-    <!-- Navigation -->
-    <nav class="navbar">
-        <div class="nav-container">
-            <a href="/" class="nav-brand">
-                <img src="/logo.svg" alt="WICKED" class="nav-logo">
-            </a>
-            
-            <button class="mobile-menu-toggle">
-                <span></span>
-                <span></span>
-                <span></span>
-            </button>
-            
-            <ul class="nav-menu">
-                <li><a href="/" class="nav-link">홈</a></li>
-                <li><a href="/bots" class="nav-link">Discord Bot</a></li>
-                <li><a href="/services" class="nav-link">개발 외주</a></li>
-                <li><a href="/hosting" class="nav-link">호스팅</a></li>
-                <li id="profile-btn" class="hidden"></li>
-                <li id="admin-btn" class="hidden">
-                    <a href="/admin" class="nav-link">관리자 패널</a>
-                </li>
-                <li id="auth-buttons">
-                    <div class="flex gap-2">
-                        <a href="/login" class="btn btn-secondary">로그인</a>
-                        <a href="/register" class="btn btn-primary">회원가입</a>
-                    </div>
-                </li>
-            </ul>
-        </div>
-    </nav>
+    <!-- Liquid Glass Background -->
+    <div class="liquid-bg">
+        <div class="liquid-blob"></div>
+        <div class="liquid-blob"></div>
+        <div class="liquid-blob"></div>
+    </div>
+
+    <!-- Theme Switcher -->
+    <div class="theme-switcher">
+        <button class="theme-toggle" aria-label="테마 변경">
+            <svg class="theme-icon sun-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="12" cy="12" r="5" stroke="currentColor" stroke-width="2"/>
+                <path d="M12 1v6m0 6v6m-9-9h6m6 0h6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            <svg class="theme-icon moon-icon hidden" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+            </svg>
+            <svg class="theme-icon system-icon hidden" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="2" y="3" width="20" height="14" rx="2" stroke="currentColor" stroke-width="2"/>
+                <path d="M8 21h8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                <path d="M12 17v4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+        </button>
+    </div>
 
     <!-- Alert Container -->
-    <div id="alert-container" style="position: fixed; top: 90px; left: 50%; transform: translateX(-50%); z-index: 1001; width: 90%; max-width: 600px;"></div>
+    <div id="alert-container" style="position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 1001; width: 90%; max-width: 600px;"></div>
 
-    <!-- Main Content -->
-    <main>
-        <div class="container">
-            <div class="flex justify-center items-center" style="min-height: calc(100vh - 160px);">
-                <div class="glass-container fade-in" style="width: 100%; max-width: 400px;">
-                    <h2 class="text-center mb-4">로그인</h2>
-                    
-                    <form id="login-form">
-                        <div class="form-group">
-                            <label for="username">아이디 또는 이메일</label>
-                            <input 
-                                type="text" 
-                                id="username" 
-                                name="username" 
-                                placeholder="아이디 또는 이메일을 입력하세요"
-                                required
-                            >
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="password">비밀번호</label>
-                            <input 
-                                type="password" 
-                                id="password" 
-                                name="password" 
-                                placeholder="비밀번호를 입력하세요"
-                                required
-                            >
-                        </div>
-                        
-                        <button type="submit" class="btn btn-primary" style="width: 100%;">
-                            로그인
-                        </button>
-                        
-                        <div class="text-center mt-4">
-                            <p style="margin-bottom: var(--spacing-sm);">
-                                계정이 없으신가요? 
-                                <a href="/register">회원가입</a>
-                            </p>
-                            <p>
-                                <a href="/forgot-password" style="color: var(--text-secondary);">비밀번호를 잊으셨나요?</a>
-                            </p>
-                        </div>
-                    </form>
+    <!-- Login Container -->
+    <div class="auth-container">
+        <div class="auth-card fade-in">
+            <div class="text-center mb-4">
+                <a href="/" class="inline-block mb-4">
+                    <img src="/logo.svg" alt="WICKED" style="height: 60px;">
+                </a>
+                <h1 class="auth-title">환영합니다</h1>
+                <p class="auth-subtitle">WICKED 계정으로 로그인하세요</p>
+            </div>
+
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="username" class="form-label">사용자명</label>
+                    <input 
+                        type="text" 
+                        id="username" 
+                        name="username" 
+                        class="form-input" 
+                        placeholder="사용자명을 입력하세요"
+                        required 
+                        autocomplete="username"
+                    >
                 </div>
+
+                <div class="form-group">
+                    <label for="password" class="form-label">비밀번호</label>
+                    <input 
+                        type="password" 
+                        id="password" 
+                        name="password" 
+                        class="form-input" 
+                        placeholder="비밀번호를 입력하세요"
+                        required 
+                        autocomplete="current-password"
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" id="remember" name="remember" class="w-4 h-4">
+                        <span class="text-secondary">로그인 상태 유지</span>
+                    </label>
+                </div>
+
+                <button type="submit" class="btn btn-primary w-full">
+                    <span>로그인</span>
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M3 10h14M12 5l5 5-5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
+            </form>
+
+            <div class="mt-4 text-center">
+                <p class="text-secondary">
+                    아직 계정이 없으신가요? 
+                    <a href="/register" class="text-primary font-medium hover:underline">회원가입</a>
+                </p>
+            </div>
+
+            <div class="mt-4 text-center">
+                <a href="/" class="text-muted hover:text-secondary">홈으로 돌아가기</a>
             </div>
         </div>
-    </main>
+    </div>
 
-    <script src="/js/common.js"></script>
+    <script src="/js/main.js"></script>
+    <script src="/js/theme.js"></script>
     <script>
-        const { $, showAlert } = Utils;
-        const { TokenManager, UserManager } = Auth;
-        const { request } = API;
-
-        // Check if already logged in
-        if (TokenManager.isAuthenticated()) {
-            window.location.href = '/';
-        }
-
-        // Handle login form submission
-        $('#login-form').addEventListener('submit', async (e) => {
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             
-            const submitBtn = e.target.querySelector('button[type="submit"]');
-            const originalText = submitBtn.textContent;
-            submitBtn.textContent = '로그인 중...';
-            submitBtn.disabled = true;
+            const submitButton = e.target.querySelector('button[type="submit"]');
+            const originalContent = submitButton.innerHTML;
+            submitButton.disabled = true;
+            submitButton.innerHTML = '<span class="loading"></span>';
+            
+            const formData = {
+                username: e.target.username.value,
+                password: e.target.password.value
+            };
             
             try {
-                const formData = new FormData(e.target);
-                const data = {
-                    username: formData.get('username'),
-                    password: formData.get('password')
-                };
-                
-                const response = await request('/auth/login', {
+                const data = await apiRequest('/auth/login', {
                     method: 'POST',
-                    body: data
+                    body: JSON.stringify(formData)
                 });
                 
-                if (response.token) {
-                    TokenManager.setToken(response.token);
-                    UserManager.setUser(response.user);
-                    
-                    showAlert('로그인 성공!', 'success');
-                    
-                    // Redirect based on user role
-                    if (response.user.isAdmin) {
-                        setTimeout(() => {
-                            window.location.href = '/admin';
-                        }, 1000);
-                    } else {
-                        setTimeout(() => {
-                            window.location.href = '/';
-                        }, 1000);
-                    }
-                }
+                // Store auth data
+                TokenManager.setToken(data.token);
+                UserManager.setUser(data.user);
+                
+                showAlert('로그인 성공! 잠시 후 이동합니다...', 'success');
+                
+                // Redirect after short delay
+                setTimeout(() => {
+                    const redirectUrl = new URLSearchParams(window.location.search).get('redirect') || '/';
+                    window.location.href = redirectUrl;
+                }, 1000);
+                
             } catch (error) {
                 showAlert(error.message || '로그인에 실패했습니다.', 'error');
-                submitBtn.textContent = originalText;
-                submitBtn.disabled = false;
+                submitButton.disabled = false;
+                submitButton.innerHTML = originalContent;
             }
         });
     </script>

@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="page-title">WICKED</title>
+    <meta name="description" id="page-description" content="">
+    <link rel="preconnect" href="//fonts.googleapis.com">
+    <link rel="preconnect" href="//fonts.gstatic.com" crossorigin>
+    <link href="//fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        .page-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        /* Content Styles */
+        .page-content h1,
+        .page-content h2,
+        .page-content h3,
+        .page-content h4,
+        .page-content h5,
+        .page-content h6 {
+            margin-top: var(--spacing-xl);
+            margin-bottom: var(--spacing-md);
+            font-weight: 600;
+        }
+        
+        .page-content h1 { font-size: 2.5em; }
+        .page-content h2 { font-size: 2em; }
+        .page-content h3 { font-size: 1.5em; }
+        .page-content h4 { font-size: 1.25em; }
+        
+        .page-content p {
+            margin-bottom: var(--spacing-md);
+            line-height: 1.8;
+        }
+        
+        .page-content a {
+            color: var(--accent-primary);
+            text-decoration: underline;
+            transition: color var(--transition-fast);
+        }
+        
+        .page-content a:hover {
+            color: var(--accent-secondary);
+        }
+        
+        .page-content pre {
+            background: var(--bg-tertiary);
+            padding: var(--spacing-lg);
+            border-radius: var(--radius-sm);
+            overflow-x: auto;
+            margin-bottom: var(--spacing-lg);
+        }
+        
+        .page-content code {
+            background: var(--bg-tertiary);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.9em;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .page-content pre code {
+            background: none;
+            padding: 0;
+        }
+        
+        .page-content ul,
+        .page-content ol {
+            margin-bottom: var(--spacing-md);
+            padding-left: var(--spacing-xl);
+        }
+        
+        .page-content li {
+            margin-bottom: var(--spacing-sm);
+            line-height: 1.8;
+        }
+        
+        .page-content blockquote {
+            border-left: 4px solid var(--accent-primary);
+            padding-left: var(--spacing-lg);
+            margin: var(--spacing-lg) 0;
+            color: var(--text-secondary);
+            font-style: italic;
+        }
+        
+        .page-content img {
+            max-width: 100%;
+            height: auto;
+            border-radius: var(--radius-md);
+            margin: var(--spacing-lg) 0;
+        }
+        
+        .page-content table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: var(--spacing-lg) 0;
+        }
+        
+        .page-content th,
+        .page-content td {
+            padding: var(--spacing-sm) var(--spacing-md);
+            border: 1px solid var(--glass-border);
+            text-align: left;
+        }
+        
+        .page-content th {
+            background: var(--glass-bg);
+            font-weight: 600;
+        }
+        
+        .page-content hr {
+            border: none;
+            border-top: 1px solid var(--glass-border);
+            margin: var(--spacing-xl) 0;
+        }
+        
+        .page-meta {
+            display: flex;
+            gap: var(--spacing-lg);
+            align-items: center;
+            margin-bottom: var(--spacing-xl);
+            color: var(--text-secondary);
+            font-size: 0.9em;
+        }
+        
+        .page-category {
+            display: inline-block;
+            padding: var(--spacing-xs) var(--spacing-md);
+            background: var(--accent-gradient);
+            color: white;
+            border-radius: var(--radius-full);
+            font-size: 0.875em;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    <!-- Liquid Glass Background -->
+    <div class="liquid-bg">
+        <div class="liquid-blob"></div>
+        <div class="liquid-blob"></div>
+        <div class="liquid-blob"></div>
+    </div>
+    
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="/" class="nav-brand">
+                <img src="/logo.svg" alt="WICKED" class="nav-logo">
+                <img src="/logo-animated.gif" alt="WICKED" class="nav-logo-gif">
+            </a>
+            
+            <button class="mobile-menu-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            
+            <ul class="nav-menu">
+                <li><a href="/" class="nav-link">홈</a></li>
+                <li><a href="/bots" class="nav-link">Discord Bot</a></li>
+                <li><a href="/services" class="nav-link">개발 외주</a></li>
+                <li><a href="/hosting" class="nav-link">호스팅</a></li>
+                <li id="profile-btn" class="hidden"></li>
+                <li id="admin-btn" class="hidden">
+                    <a href="/admin" class="nav-link">관리자 패널</a>
+                </li>
+                <li id="auth-buttons">
+                    <div class="flex gap-2">
+                        <a href="/login" class="btn btn-secondary">로그인</a>
+                        <a href="/register" class="btn btn-primary">회원가입</a>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Theme Switcher -->
+    <div class="theme-switcher">
+        <button class="theme-toggle" aria-label="테마 변경">
+            <svg class="theme-icon sun-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="12" cy="12" r="5" stroke="currentColor" stroke-width="2"/>
+                <path d="M12 1v6m0 6v6m-9-9h6m6 0h6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            <svg class="theme-icon moon-icon hidden" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+            </svg>
+            <svg class="theme-icon system-icon hidden" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="2" y="3" width="20" height="14" rx="2" stroke="currentColor" stroke-width="2"/>
+                <path d="M8 21h8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                <path d="M12 17v4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+        </button>
+    </div>
+
+    <!-- Alert Container -->
+    <div id="alert-container" style="position: fixed; top: 90px; left: 50%; transform: translateX(-50%); z-index: 1001; width: 90%; max-width: 600px;"></div>
+
+    <!-- Main Content -->
+    <main style="margin-top: 80px; min-height: calc(100vh - 80px);">
+        <div class="container" style="padding: var(--spacing-xl) var(--spacing-lg);">
+            <div class="glass-card fade-in">
+                <div class="page-content">
+                    <div id="loading" class="text-center">
+                        <div class="loading"></div>
+                        <p class="text-muted mt-3">페이지를 불러오는 중...</p>
+                    </div>
+                    <div id="page-content" style="display: none;">
+                        <!-- Dynamic content will be loaded here -->
+                    </div>
+                    <div id="error-content" style="display: none;" class="text-center">
+                        <h1>404</h1>
+                        <p class="text-muted">요청하신 페이지를 찾을 수 없습니다.</p>
+                        <a href="/" class="btn btn-primary mt-4">홈으로 돌아가기</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="/js/main.js"></script>
+    <script src="/js/theme.js"></script>
+    <script>
+        // Get page slug from URL
+        function getPageSlug() {
+            const path = window.location.pathname;
+            const matches = path.match(/^\/pages\/(.+)$/);
+            return matches ? matches[1] : null;
+        }
+
+        // Load page content
+        async function loadPageContent() {
+            const slug = getPageSlug();
+            
+            if (!slug) {
+                showError();
+                return;
+            }
+            
+            try {
+                const data = await apiRequest(`/pages/public/${slug}`);
+                const page = data.page;
+                
+                // Update page metadata
+                document.title = `${page.title} - WICKED`;
+                document.getElementById('page-title').textContent = page.title;
+                
+                if (page.meta_description) {
+                    document.getElementById('page-description').setAttribute('content', page.meta_description);
+                }
+                
+                // Build page content
+                const contentHtml = `
+                    <div class="page-meta">
+                        <span class="page-category">${getCategoryName(page.category)}</span>
+                        <span>작성자: ${page.author?.username || 'Unknown'}</span>
+                        <span>${new Date(page.published_at).toLocaleDateString('ko-KR')}</span>
+                    </div>
+                    <h1>${page.title}</h1>
+                    ${page.htmlContent}
+                `;
+                
+                // Display content
+                document.getElementById('page-content').innerHTML = contentHtml;
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('page-content').style.display = 'block';
+                
+            } catch (error) {
+                console.error('Error loading page:', error);
+                showError();
+            }
+        }
+
+        // Show error
+        function showError() {
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('error-content').style.display = 'block';
+        }
+
+        // Get category display name
+        function getCategoryName(category) {
+            const names = {
+                'bot': 'Discord Bot',
+                'service': '서비스',
+                'general': '일반'
+            };
+            return names[category] || category;
+        }
+
+        // Load page on ready
+        document.addEventListener('DOMContentLoaded', () => {
+            loadPageContent();
+        });
+    </script>
+</body>
+</html>
