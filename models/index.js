@@ -4,6 +4,7 @@ const AdminActionLog = require('./AdminActionLog');
 const DiscordBot = require('./DiscordBot');
 const HostingCategory = require('./HostingCategory');
 const HostingProduct = require('./HostingProduct');
+const Page = require('./Page')(sequelize);
 
 // Define associations
 // User and AdminActionLog relationships
@@ -22,11 +23,21 @@ DiscordBot.belongsTo(User, { foreignKey: 'updated_by', as: 'updater' });
 HostingCategory.hasMany(HostingProduct, { foreignKey: 'category_id', as: 'products', onDelete: 'CASCADE' });
 HostingProduct.belongsTo(HostingCategory, { foreignKey: 'category_id', as: 'category' });
 
+// User and Page relationships
+User.hasMany(Page, { foreignKey: 'author_id', as: 'pages' });
+Page.belongsTo(User, { foreignKey: 'author_id', as: 'author' });
+
+// Initialize Page associations
+if (Page.associate) {
+  Page.associate({ User, AdminActionLog, DiscordBot, HostingCategory, HostingProduct, Page });
+}
+
 module.exports = {
   sequelize,
   User,
   AdminActionLog,
   DiscordBot,
   HostingCategory,
-  HostingProduct
+  HostingProduct,
+  Page
 };

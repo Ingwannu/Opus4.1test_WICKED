@@ -1,262 +1,204 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>회원가입 - WICKED</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="//fonts.googleapis.com">
+    <link rel="preconnect" href="//fonts.gstatic.com" crossorigin>
+    <link href="//fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
-    <!-- Navigation -->
-    <nav class="navbar">
-        <div class="nav-container">
-            <a href="/" class="nav-brand">
-                <img src="/logo.svg" alt="WICKED" class="nav-logo">
-            </a>
-            
-            <button class="mobile-menu-toggle">
-                <span></span>
-                <span></span>
-                <span></span>
-            </button>
-            
-            <ul class="nav-menu">
-                <li><a href="/" class="nav-link">홈</a></li>
-                <li><a href="/bots" class="nav-link">Discord Bot</a></li>
-                <li><a href="/services" class="nav-link">개발 외주</a></li>
-                <li><a href="/hosting" class="nav-link">호스팅</a></li>
-                <li id="profile-btn" class="hidden"></li>
-                <li id="admin-btn" class="hidden">
-                    <a href="/admin" class="nav-link">관리자 패널</a>
-                </li>
-                <li id="auth-buttons">
-                    <div class="flex gap-2">
-                        <a href="/login" class="btn btn-secondary">로그인</a>
-                        <a href="/register" class="btn btn-primary">회원가입</a>
-                    </div>
-                </li>
-            </ul>
-        </div>
-    </nav>
+    <!-- Liquid Glass Background -->
+    <div class="liquid-bg">
+        <div class="liquid-blob"></div>
+        <div class="liquid-blob"></div>
+        <div class="liquid-blob"></div>
+    </div>
+
+    <!-- Theme Switcher -->
+    <div class="theme-switcher">
+        <button class="theme-toggle" aria-label="테마 변경">
+            <svg class="theme-icon sun-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="12" cy="12" r="5" stroke="currentColor" stroke-width="2"/>
+                <path d="M12 1v6m0 6v6m-9-9h6m6 0h6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            <svg class="theme-icon moon-icon hidden" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+            </svg>
+            <svg class="theme-icon system-icon hidden" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="2" y="3" width="20" height="14" rx="2" stroke="currentColor" stroke-width="2"/>
+                <path d="M8 21h8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                <path d="M12 17v4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+        </button>
+    </div>
 
     <!-- Alert Container -->
-    <div id="alert-container" style="position: fixed; top: 90px; left: 50%; transform: translateX(-50%); z-index: 1001; width: 90%; max-width: 600px;"></div>
+    <div id="alert-container" style="position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 1001; width: 90%; max-width: 600px;"></div>
 
-    <!-- Main Content -->
-    <main>
-        <div class="container">
-            <div class="flex justify-center items-center" style="min-height: calc(100vh - 160px);">
-                <div class="glass-container fade-in" style="width: 100%; max-width: 500px;">
-                    <h2 class="text-center mb-4">회원가입</h2>
-                    
-                    <form id="register-form">
-                        <div class="form-group">
-                            <label for="username">아이디</label>
-                            <input 
-                                type="text" 
-                                id="username" 
-                                name="username" 
-                                placeholder="영문, 숫자, 언더스코어(_), 하이픈(-) 사용 가능"
-                                pattern="[a-zA-Z0-9_-]{3,50}"
-                                title="3-50자의 영문, 숫자, 언더스코어, 하이픈만 사용 가능합니다"
-                                required
-                            >
-                            <small id="username-check" style="display: block; margin-top: var(--spacing-xs); color: var(--text-muted);"></small>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="email">이메일</label>
-                            <input 
-                                type="email" 
-                                id="email" 
-                                name="email" 
-                                placeholder="example@email.com"
-                                required
-                            >
-                            <small id="email-check" style="display: block; margin-top: var(--spacing-xs); color: var(--text-muted);"></small>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="password">비밀번호</label>
-                            <input 
-                                type="password" 
-                                id="password" 
-                                name="password" 
-                                placeholder="최소 6자 이상"
-                                minlength="6"
-                                required
-                            >
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="password-confirm">비밀번호 확인</label>
-                            <input 
-                                type="password" 
-                                id="password-confirm" 
-                                name="password-confirm" 
-                                placeholder="비밀번호를 다시 입력하세요"
-                                minlength="6"
-                                required
-                            >
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="phone">전화번호</label>
-                            <input 
-                                type="tel" 
-                                id="phone" 
-                                name="phone" 
-                                placeholder="01012345678 (하이픈 없이 입력)"
-                                pattern="[0-9]{10,15}"
-                                title="10-15자리 숫자만 입력하세요"
-                                required
-                            >
-                        </div>
-                        
-                        <button type="submit" class="btn btn-primary" style="width: 100%;">
-                            회원가입
-                        </button>
-                        
-                        <div class="text-center mt-4">
-                            <p>
-                                이미 계정이 있으신가요? 
-                                <a href="/login">로그인</a>
-                            </p>
-                        </div>
-                    </form>
+    <!-- Register Container -->
+    <div class="auth-container">
+        <div class="auth-card fade-in">
+            <div class="text-center mb-4">
+                <a href="/" class="inline-block mb-4">
+                    <img src="/logo.svg" alt="WICKED" style="height: 60px;">
+                </a>
+                <h1 class="auth-title">계정 만들기</h1>
+                <p class="auth-subtitle">WICKED의 멤버가 되어보세요</p>
+            </div>
+
+            <form id="registerForm">
+                <div class="form-group">
+                    <label for="username" class="form-label">사용자명</label>
+                    <input 
+                        type="text" 
+                        id="username" 
+                        name="username" 
+                        class="form-input" 
+                        placeholder="사용자명을 입력하세요"
+                        required 
+                        minlength="3"
+                        maxlength="20"
+                        pattern="[a-zA-Z0-9_]+"
+                        autocomplete="username"
+                    >
+                    <small class="text-muted">3-20자의 영문, 숫자, 언더스코어(_)만 사용 가능</small>
                 </div>
+
+                <div class="form-group">
+                    <label for="email" class="form-label">이메일</label>
+                    <input 
+                        type="email" 
+                        id="email" 
+                        name="email" 
+                        class="form-input" 
+                        placeholder="이메일을 입력하세요"
+                        required 
+                        autocomplete="email"
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="password" class="form-label">비밀번호</label>
+                    <input 
+                        type="password" 
+                        id="password" 
+                        name="password" 
+                        class="form-input" 
+                        placeholder="비밀번호를 입력하세요"
+                        required 
+                        minlength="6"
+                        autocomplete="new-password"
+                    >
+                    <small class="text-muted">최소 6자 이상</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="confirmPassword" class="form-label">비밀번호 확인</label>
+                    <input 
+                        type="password" 
+                        id="confirmPassword" 
+                        name="confirmPassword" 
+                        class="form-input" 
+                        placeholder="비밀번호를 다시 입력하세요"
+                        required 
+                        autocomplete="new-password"
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" id="agree" name="agree" required class="w-4 h-4">
+                        <span class="text-secondary">서비스 이용약관 및 개인정보처리방침에 동의합니다</span>
+                    </label>
+                </div>
+
+                <button type="submit" class="btn btn-primary w-full">
+                    <span>회원가입</span>
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M10 4v12m-6-6h12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
+            </form>
+
+            <div class="mt-4 text-center">
+                <p class="text-secondary">
+                    이미 계정이 있으신가요? 
+                    <a href="/login" class="text-primary font-medium hover:underline">로그인</a>
+                </p>
+            </div>
+
+            <div class="mt-4 text-center">
+                <a href="/" class="text-muted hover:text-secondary">홈으로 돌아가기</a>
             </div>
         </div>
-    </main>
+    </div>
 
-    <script src="/js/common.js"></script>
+    <script src="/js/main.js"></script>
+    <script src="/js/theme.js"></script>
     <script>
-        const { $, showAlert } = Utils;
-        const { TokenManager, UserManager } = Auth;
-        const { request } = API;
-
-        // Check if already logged in
-        if (TokenManager.isAuthenticated()) {
-            window.location.href = '/';
-        }
-
-        // Real-time username availability check
-        let usernameCheckTimeout;
-        $('#username').addEventListener('input', (e) => {
-            clearTimeout(usernameCheckTimeout);
-            const username = e.target.value;
-            const checkElement = $('#username-check');
-            
-            if (username.length < 3) {
-                checkElement.textContent = '';
-                return;
-            }
-            
-            checkElement.textContent = '확인 중...';
-            checkElement.style.color = 'var(--text-muted)';
-            
-            usernameCheckTimeout = setTimeout(async () => {
-                try {
-                    const response = await fetch(`/api/auth/check-username/${username}`);
-                    const data = await response.json();
-                    
-                    if (data.available) {
-                        checkElement.textContent = '✓ 사용 가능한 아이디입니다';
-                        checkElement.style.color = 'var(--success)';
-                    } else {
-                        checkElement.textContent = '✗ 이미 사용 중인 아이디입니다';
-                        checkElement.style.color = 'var(--error)';
-                    }
-                } catch (error) {
-                    checkElement.textContent = '';
-                }
-            }, 500);
-        });
-
-        // Real-time email availability check
-        let emailCheckTimeout;
-        $('#email').addEventListener('input', (e) => {
-            clearTimeout(emailCheckTimeout);
-            const email = e.target.value;
-            const checkElement = $('#email-check');
-            
-            if (!email || !email.includes('@')) {
-                checkElement.textContent = '';
-                return;
-            }
-            
-            checkElement.textContent = '확인 중...';
-            checkElement.style.color = 'var(--text-muted)';
-            
-            emailCheckTimeout = setTimeout(async () => {
-                try {
-                    const response = await fetch(`/api/auth/check-email/${email}`);
-                    const data = await response.json();
-                    
-                    if (data.available) {
-                        checkElement.textContent = '✓ 사용 가능한 이메일입니다';
-                        checkElement.style.color = 'var(--success)';
-                    } else {
-                        checkElement.textContent = '✗ 이미 사용 중인 이메일입니다';
-                        checkElement.style.color = 'var(--error)';
-                    }
-                } catch (error) {
-                    checkElement.textContent = '';
-                }
-            }, 500);
-        });
-
-        // Handle register form submission
-        $('#register-form').addEventListener('submit', async (e) => {
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             
-            const formData = new FormData(e.target);
-            const password = formData.get('password');
-            const passwordConfirm = formData.get('password-confirm');
+            const password = e.target.password.value;
+            const confirmPassword = e.target.confirmPassword.value;
             
-            // Validate password match
-            if (password !== passwordConfirm) {
+            if (password !== confirmPassword) {
                 showAlert('비밀번호가 일치하지 않습니다.', 'error');
                 return;
             }
             
-            const submitBtn = e.target.querySelector('button[type="submit"]');
-            const originalText = submitBtn.textContent;
-            submitBtn.textContent = '가입 중...';
-            submitBtn.disabled = true;
+            const submitButton = e.target.querySelector('button[type="submit"]');
+            const originalContent = submitButton.innerHTML;
+            submitButton.disabled = true;
+            submitButton.innerHTML = '<span class="loading"></span>';
+            
+            const formData = {
+                username: e.target.username.value,
+                email: e.target.email.value,
+                password: password
+            };
             
             try {
-                const data = {
-                    username: formData.get('username'),
-                    email: formData.get('email'),
-                    password: password,
-                    phone: formData.get('phone')
-                };
-                
-                const response = await request('/auth/register', {
+                const data = await apiRequest('/auth/register', {
                     method: 'POST',
-                    body: data
+                    body: JSON.stringify(formData)
                 });
                 
-                if (response.token) {
-                    TokenManager.setToken(response.token);
-                    UserManager.setUser(response.user);
-                    
-                    showAlert('회원가입이 완료되었습니다!', 'success');
-                    
-                    setTimeout(() => {
-                        window.location.href = '/';
-                    }, 1500);
-                }
+                // Store auth data
+                TokenManager.setToken(data.token);
+                UserManager.setUser(data.user);
+                
+                showAlert('회원가입 성공! 잠시 후 홈으로 이동합니다...', 'success');
+                
+                // Redirect after short delay
+                setTimeout(() => {
+                    window.location.href = '/';
+                }, 1500);
+                
             } catch (error) {
                 showAlert(error.message || '회원가입에 실패했습니다.', 'error');
-                submitBtn.textContent = originalText;
-                submitBtn.disabled = false;
+                submitButton.disabled = false;
+                submitButton.innerHTML = originalContent;
             }
         });
+
+        // Real-time password match validation
+        const passwordInput = document.getElementById('password');
+        const confirmPasswordInput = document.getElementById('confirmPassword');
+        
+        function checkPasswordMatch() {
+            if (confirmPasswordInput.value && passwordInput.value !== confirmPasswordInput.value) {
+                confirmPasswordInput.setCustomValidity('비밀번호가 일치하지 않습니다');
+            } else {
+                confirmPasswordInput.setCustomValidity('');
+            }
+        }
+        
+        passwordInput.addEventListener('change', checkPasswordMatch);
+        confirmPasswordInput.addEventListener('input', checkPasswordMatch);
     </script>
 </body>
 </html>

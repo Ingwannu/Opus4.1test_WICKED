@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>페이지 관리 - WICKED Admin</title>
+    <link rel="preconnect" href="//fonts.googleapis.com">
+    <link rel="preconnect" href="//fonts.gstatic.com" crossorigin>
+    <link href="//fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/admin.css">
+    <style>
+        .page-editor {
+            display: flex;
+            gap: var(--spacing-lg);
+            height: 600px;
+        }
+        
+        .editor-panel, .preview-panel {
+            flex: 1;
+            overflow: auto;
+        }
+        
+        .editor-textarea {
+            width: 100%;
+            height: 100%;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            padding: var(--spacing-md);
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-md);
+            color: var(--text-primary);
+            resize: none;
+        }
+        
+        .preview-content {
+            padding: var(--spacing-lg);
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-md);
+            height: 100%;
+            overflow-y: auto;
+        }
+        
+        /* Markdown Preview Styles */
+        .preview-content h1,
+        .preview-content h2,
+        .preview-content h3,
+        .preview-content h4,
+        .preview-content h5,
+        .preview-content h6 {
+            margin-top: var(--spacing-lg);
+            margin-bottom: var(--spacing-md);
+            font-weight: 600;
+        }
+        
+        .preview-content h1 { font-size: 2em; }
+        .preview-content h2 { font-size: 1.5em; }
+        .preview-content h3 { font-size: 1.25em; }
+        
+        .preview-content p {
+            margin-bottom: var(--spacing-md);
+            line-height: 1.8;
+        }
+        
+        .preview-content pre {
+            background: var(--bg-tertiary);
+            padding: var(--spacing-md);
+            border-radius: var(--radius-sm);
+            overflow-x: auto;
+            margin-bottom: var(--spacing-md);
+        }
+        
+        .preview-content code {
+            background: var(--bg-tertiary);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+        
+        .preview-content pre code {
+            background: none;
+            padding: 0;
+        }
+        
+        .preview-content ul,
+        .preview-content ol {
+            margin-bottom: var(--spacing-md);
+            padding-left: var(--spacing-lg);
+        }
+        
+        .preview-content li {
+            margin-bottom: var(--spacing-sm);
+        }
+        
+        .preview-content blockquote {
+            border-left: 4px solid var(--accent-primary);
+            padding-left: var(--spacing-md);
+            margin: var(--spacing-md) 0;
+            color: var(--text-secondary);
+        }
+        
+        .editor-toolbar {
+            display: flex;
+            gap: var(--spacing-sm);
+            margin-bottom: var(--spacing-md);
+            flex-wrap: wrap;
+        }
+        
+        .toolbar-btn {
+            padding: var(--spacing-sm) var(--spacing-md);
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            color: var(--text-primary);
+        }
+        
+        .toolbar-btn:hover {
+            background: var(--glass-border);
+        }
+        
+        @media (max-width: 768px) {
+            .page-editor {
+                flex-direction: column;
+                height: auto;
+            }
+            
+            .editor-panel, .preview-panel {
+                height: 400px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Liquid Glass Background -->
+    <div class="liquid-bg">
+        <div class="liquid-blob"></div>
+        <div class="liquid-blob"></div>
+        <div class="liquid-blob"></div>
+    </div>
+
+    <!-- Theme Switcher -->
+    <div class="theme-switcher">
+        <button class="theme-toggle" aria-label="테마 변경">
+            <svg class="theme-icon sun-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="12" cy="12" r="5" stroke="currentColor" stroke-width="2"/>
+                <path d="M12 1v6m0 6v6m-9-9h6m6 0h6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            <svg class="theme-icon moon-icon hidden" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+            </svg>
+            <svg class="theme-icon system-icon hidden" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="2" y="3" width="20" height="14" rx="2" stroke="currentColor" stroke-width="2"/>
+                <path d="M8 21h8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                <path d="M12 17v4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+        </button>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="/" class="nav-brand">
+                <img src="/logo.svg" alt="WICKED" class="nav-logo">
+                <img src="/logo-animated.gif" alt="WICKED" class="nav-logo-gif">
+            </a>
+            
+            <button class="mobile-menu-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            
+            <ul class="nav-menu">
+                <li><a href="/" class="nav-link">홈</a></li>
+                <li><a href="/admin" class="nav-link">관리자 대시보드</a></li>
+                <li><a href="/admin-pages" class="nav-link">페이지 관리</a></li>
+                <li id="profile-btn" class="hidden"></li>
+                <li>
+                    <button onclick="logout()" class="btn btn-secondary">로그아웃</button>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Alert Container -->
+    <div id="alert-container" style="position: fixed; top: 90px; left: 50%; transform: translateX(-50%); z-index: 1001; width: 90%; max-width: 600px;"></div>
+
+    <!-- Main Content -->
+    <main style="margin-top: 80px; padding: var(--spacing-xl);">
+        <div class="container">
+            <!-- Header -->
+            <div class="flex justify-between items-center mb-5">
+                <h1>페이지 관리</h1>
+                <button onclick="showPageModal()" class="btn btn-primary">
+                    <span>새 페이지</span>
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M10 4v12m-6-6h12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Pages List -->
+            <div class="glass-card">
+                <div class="mb-4">
+                    <input type="text" id="search-pages" placeholder="페이지 검색..." class="form-input" onkeyup="filterPages()">
+                </div>
+                <div id="pages-list">
+                    <div class="text-center">
+                        <div class="loading"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Page Editor Modal -->
+    <div id="page-modal" class="modal-overlay hidden">
+        <div class="modal-content" style="max-width: 1200px;">
+            <div class="modal-header">
+                <h2 class="modal-title" id="modal-title">새 페이지 작성</h2>
+                <button onclick="hidePageModal()" class="modal-close">&times;</button>
+            </div>
+            
+            <form id="page-form">
+                <input type="hidden" id="page-id">
+                
+                <div class="grid grid-cols-2 gap-4 mb-4">
+                    <div class="form-group">
+                        <label for="page-title" class="form-label">제목</label>
+                        <input type="text" id="page-title" class="form-input" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="page-slug" class="form-label">URL 슬러그</label>
+                        <input type="text" id="page-slug" class="form-input" pattern="[a-z0-9-]+" required>
+                        <small class="text-muted">소문자, 숫자, 하이픈만 사용 가능</small>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4 mb-4">
+                    <div class="form-group">
+                        <label for="page-category" class="form-label">카테고리</label>
+                        <select id="page-category" class="form-select" required>
+                            <option value="bot">Discord Bot</option>
+                            <option value="service">서비스</option>
+                            <option value="general">일반</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="page-status" class="form-label">상태</label>
+                        <select id="page-status" class="form-select" required>
+                            <option value="draft">초안</option>
+                            <option value="published">게시됨</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-group mb-4">
+                    <label for="page-description" class="form-label">메타 설명 (SEO)</label>
+                    <input type="text" id="page-description" class="form-input" maxlength="160">
+                    <small class="text-muted">검색 결과에 표시될 설명 (최대 160자)</small>
+                </div>
+                
+                <div class="form-group mb-4">
+                    <label class="form-label">콘텐츠 (Markdown)</label>
+                    <div class="editor-toolbar">
+                        <button type="button" class="toolbar-btn" onclick="insertMarkdown('**', '**')">
+                            <strong>B</strong>
+                        </button>
+                        <button type="button" class="toolbar-btn" onclick="insertMarkdown('*', '*')">
+                            <em>I</em>
+                        </button>
+                        <button type="button" class="toolbar-btn" onclick="insertMarkdown('## ', '')">
+                            H2
+                        </button>
+                        <button type="button" class="toolbar-btn" onclick="insertMarkdown('### ', '')">
+                            H3
+                        </button>
+                        <button type="button" class="toolbar-btn" onclick="insertMarkdown('[', '](url)')">
+                            Link
+                        </button>
+                        <button type="button" class="toolbar-btn" onclick="insertMarkdown('![', '](image-url)')">
+                            Image
+                        </button>
+                        <button type="button" class="toolbar-btn" onclick="insertMarkdown('```\n', '\n```')">
+                            Code
+                        </button>
+                        <button type="button" class="toolbar-btn" onclick="insertMarkdown('> ', '')">
+                            Quote
+                        </button>
+                        <button type="button" class="toolbar-btn" onclick="insertMarkdown('- ', '')">
+                            List
+                        </button>
+                    </div>
+                    <div class="page-editor">
+                        <div class="editor-panel">
+                            <textarea id="page-content" class="editor-textarea" placeholder="마크다운으로 콘텐츠를 작성하세요..." required onkeyup="updatePreview()"></textarea>
+                        </div>
+                        <div class="preview-panel">
+                            <div id="preview-content" class="preview-content">
+                                <p class="text-muted">미리보기가 여기에 표시됩니다...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flex gap-3">
+                    <button type="submit" class="btn btn-primary">저장</button>
+                    <button type="button" onclick="hidePageModal()" class="btn btn-secondary">취소</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="/js/main.js"></script>
+    <script src="/js/theme.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dompurify/dist/purify.min.js"></script>
+    <script>
+        // Check admin permission
+        if (!UserManager.isAdmin()) {
+            window.location.href = '/';
+        }
+
+        let allPages = [];
+
+        // Load pages
+        async function loadPages() {
+            try {
+                const data = await apiRequest('/pages');
+                allPages = data.pages;
+                renderPages(allPages);
+            } catch (error) {
+                showAlert('페이지 목록을 불러오는데 실패했습니다.', 'error');
+            }
+        }
+
+        // Render pages list
+        function renderPages(pages) {
+            const container = document.getElementById('pages-list');
+            
+            if (pages.length === 0) {
+                container.innerHTML = '<p class="text-center text-muted">아직 작성된 페이지가 없습니다.</p>';
+                return;
+            }
+            
+            container.innerHTML = `
+                <table class="w-full">
+                    <thead>
+                        <tr>
+                            <th>제목</th>
+                            <th>카테고리</th>
+                            <th>상태</th>
+                            <th>작성자</th>
+                            <th>작성일</th>
+                            <th>작업</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${pages.map(page => `
+                            <tr>
+                                <td>${page.title}</td>
+                                <td><span class="badge badge-${page.category}">${page.category}</span></td>
+                                <td><span class="badge badge-${page.status}">${page.status}</span></td>
+                                <td>${page.author?.username || 'Unknown'}</td>
+                                <td>${new Date(page.created_at).toLocaleDateString('ko-KR')}</td>
+                                <td>
+                                    <button onclick="editPage(${page.id})" class="btn btn-sm">수정</button>
+                                    <button onclick="deletePage(${page.id})" class="btn btn-sm btn-danger">삭제</button>
+                                    ${page.status === 'published' ? `<a href="/pages/${page.slug}" target="_blank" class="btn btn-sm">보기</a>` : ''}
+                                </td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+        }
+
+        // Filter pages
+        function filterPages() {
+            const searchTerm = document.getElementById('search-pages').value.toLowerCase();
+            const filtered = allPages.filter(page => 
+                page.title.toLowerCase().includes(searchTerm) ||
+                page.slug.toLowerCase().includes(searchTerm) ||
+                page.category.toLowerCase().includes(searchTerm)
+            );
+            renderPages(filtered);
+        }
+
+        // Show page modal
+        function showPageModal() {
+            document.getElementById('page-modal').classList.remove('hidden');
+            document.getElementById('modal-title').textContent = '새 페이지 작성';
+            document.getElementById('page-form').reset();
+            document.getElementById('page-id').value = '';
+            updatePreview();
+        }
+
+        // Hide page modal
+        function hidePageModal() {
+            document.getElementById('page-modal').classList.add('hidden');
+        }
+
+        // Edit page
+        async function editPage(id) {
+            try {
+                const data = await apiRequest(`/pages/${id}`);
+                const page = data.page;
+                
+                document.getElementById('page-id').value = page.id;
+                document.getElementById('page-title').value = page.title;
+                document.getElementById('page-slug').value = page.slug;
+                document.getElementById('page-category').value = page.category;
+                document.getElementById('page-status').value = page.status;
+                document.getElementById('page-description').value = page.meta_description || '';
+                document.getElementById('page-content').value = page.content;
+                
+                document.getElementById('modal-title').textContent = '페이지 수정';
+                document.getElementById('page-modal').classList.remove('hidden');
+                updatePreview();
+            } catch (error) {
+                showAlert('페이지 정보를 불러오는데 실패했습니다.', 'error');
+            }
+        }
+
+        // Delete page
+        async function deletePage(id) {
+            if (!confirm('정말로 이 페이지를 삭제하시겠습니까?')) {
+                return;
+            }
+            
+            try {
+                await apiRequest(`/pages/${id}`, { method: 'DELETE' });
+                showAlert('페이지가 삭제되었습니다.', 'success');
+                loadPages();
+            } catch (error) {
+                showAlert('페이지 삭제에 실패했습니다.', 'error');
+            }
+        }
+
+        // Update preview
+        function updatePreview() {
+            const content = document.getElementById('page-content').value;
+            const preview = document.getElementById('preview-content');
+            
+            if (!content) {
+                preview.innerHTML = '<p class="text-muted">미리보기가 여기에 표시됩니다...</p>';
+                return;
+            }
+            
+            const html = marked.parse(content);
+            preview.innerHTML = DOMPurify.sanitize(html);
+        }
+
+        // Insert markdown
+        function insertMarkdown(before, after) {
+            const textarea = document.getElementById('page-content');
+            const start = textarea.selectionStart;
+            const end = textarea.selectionEnd;
+            const selectedText = textarea.value.substring(start, end);
+            const replacement = before + selectedText + after;
+            
+            textarea.value = textarea.value.substring(0, start) + replacement + textarea.value.substring(end);
+            
+            // Set cursor position
+            const cursorPos = start + before.length + selectedText.length;
+            textarea.setSelectionRange(cursorPos, cursorPos);
+            textarea.focus();
+            
+            updatePreview();
+        }
+
+        // Auto-generate slug from title
+        document.getElementById('page-title').addEventListener('input', (e) => {
+            const slugInput = document.getElementById('page-slug');
+            if (!slugInput.value || slugInput.value === slugify(e.target.value.slice(0, -1))) {
+                slugInput.value = slugify(e.target.value);
+            }
+        });
+
+        function slugify(text) {
+            return text
+                .toLowerCase()
+                .replace(/[^a-z0-9]+/g, '-')
+                .replace(/^-+|-+$/g, '');
+        }
+
+        // Handle form submission
+        document.getElementById('page-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const pageId = document.getElementById('page-id').value;
+            const pageData = {
+                title: document.getElementById('page-title').value,
+                slug: document.getElementById('page-slug').value,
+                content: document.getElementById('page-content').value,
+                category: document.getElementById('page-category').value,
+                status: document.getElementById('page-status').value,
+                meta_description: document.getElementById('page-description').value
+            };
+            
+            try {
+                if (pageId) {
+                    await apiRequest(`/pages/${pageId}`, {
+                        method: 'PUT',
+                        body: JSON.stringify(pageData)
+                    });
+                    showAlert('페이지가 수정되었습니다.', 'success');
+                } else {
+                    await apiRequest('/pages', {
+                        method: 'POST',
+                        body: JSON.stringify(pageData)
+                    });
+                    showAlert('페이지가 생성되었습니다.', 'success');
+                }
+                
+                hidePageModal();
+                loadPages();
+            } catch (error) {
+                showAlert(error.message || '페이지 저장에 실패했습니다.', 'error');
+            }
+        });
+
+        // Load pages on page load
+        loadPages();
+    </script>
+</body>
+</html>
