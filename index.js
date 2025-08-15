@@ -20,7 +20,7 @@ const hostingRoutes = require('./routes/hosting');
 const pageRoutes = require('./routes/pages');
 
 const app = express();
-const PORT = process.env.SERVER_PORT || process.env.PORT || 50012;  // Use Pterodactyl's SERVER_PORT first
+const PORT = process.env.PORT || process.env.SERVER_PORT || 50012;  // Use Heroku's PORT first
 const HOST = '0.0.0.0';  // Always bind to all interfaces in container
 
 // Trust proxy settings for HTTPS
