@@ -25,9 +25,13 @@ if (process.env.DATABASE_URL) {
   });
 } else {
   // Local SQLite configuration
+  const storagePath = process.env.DYNO
+    ? '/tmp/database.sqlite'
+    : path.join(__dirname, '..', 'database.sqlite');
+
   sequelize = new Sequelize({
     dialect: 'sqlite',
-    storage: path.join(__dirname, '..', 'database.sqlite'),
+    storage: storagePath,
     logging: process.env.NODE_ENV === 'development' ? console.log : false,
     define: {
       timestamps: true,
