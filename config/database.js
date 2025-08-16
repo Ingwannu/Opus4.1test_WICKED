@@ -1,6 +1,6 @@
 const { Sequelize } = require('sequelize');
 const path = require('path');
-// Remove dotenv for Heroku deployment
+require('dotenv').config();
 
 let sequelize;
 
